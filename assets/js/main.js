@@ -444,11 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Event listeners
   window.addEventListener('scroll', handleScroll, { passive: true });
   
-  // Navigation
-  if (navToggle) {
-    navToggle.addEventListener('click', toggleNav);
-  }
-  
+  // Note: Navigation toggle uses inline onclick in HTML
   // Cart
   if (cartBtn) {
     cartBtn.addEventListener('click', openCart);
