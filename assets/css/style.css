@@ -177,6 +177,23 @@ p { color: var(--gray); margin-bottom: 1rem; }
   padding: 0 20px;
 }
 
+/* Mobile Navigation - Hidden on Desktop */
+.nav-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  z-index: 1001;
+  padding: 8px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  margin-left: auto;
+}
+
 .logo {
   display: flex;
   align-items: center;
