@@ -1784,6 +1784,7 @@ p { color: var(--gray); margin-bottom: 1rem; }
     background: transparent;
     box-shadow: none;
     gap: 2px;
+    right: auto;
   }
 
   .nav-menu::before { 

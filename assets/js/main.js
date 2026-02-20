@@ -198,11 +198,15 @@ function initPaystack() {
 // Navigation
 // ========================================
 function toggleNav() {
+  const navToggle = document.querySelector('.nav-toggle');
+  const navMenu = document.querySelector('.nav-menu');
   if (navToggle) navToggle.classList.toggle('active');
   if (navMenu) navMenu.classList.toggle('active');
 }
 
 function closeNav() {
+  const navToggle = document.querySelector('.nav-toggle');
+  const navMenu = document.querySelector('.nav-menu');
   if (navToggle) navToggle.classList.remove('active');
   if (navMenu) navMenu.classList.remove('active');
 }
@@ -537,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Prevent double tap zoom on buttons
-  document.querySelectorAll('.btn, .product-btn, .filter-btn').forEach(btn => {
+  document.querySelectorAll('.btn, .product-btn, .filter-btn, .nav-toggle').forEach(btn => {
     btn.addEventListener('touchend', function(e) {
       e.preventDefault();
       this.click();
