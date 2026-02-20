@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="description" content="Rich Tym Luxe | Professional lash extensions, nail services, makeup, teeth whitening, fashion braces, tattoos, wig services and unisex clothing in Ho, Ghana. Book your appointment today.">
+  <meta name="keywords" content="Beauty salon in Ho, Lash extension Ho Ghana, Nail services Ho, Makeup artist Ho Ghana, Rich Tym Luxe">
+  <meta name="theme-color" content="#ff69b4">
+  <title>Rich Tym Luxe | Beauty & Style in Ho, Ghana</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/Richtymluxe.PNG">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="assets/images/Richtymluxe.PNG" alt="Rich Tym Luxe Logo">
+      </a>
+      
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="gallery.html" class="nav-link">Gallery</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="booking.html" class="nav-link">Book Now</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+      
+      <div class="nav-actions">
+        <button class="cart-btn" onclick="openCart()">
+          <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          <span class="cart-count" style="display: none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-subtitle">Welcome to Rich Tym Luxe</span>
+        <h1 class="hero-title">Beauty & Style</h1>
+        <p class="hero-description">Experience professional beauty services in Ho, Ghana. From lash extensions to makeup, nails to tattoos - we're here to make you look confident and glamorous.</p>
+        <div class="hero-buttons">
+          <a href="booking.html" class="btn btn-primary">Book Appointment</a>
+          <a href="services.html" class="btn btn-secondary">View Services</a>
+          <a href="shop.html" class="btn btn-white">Shop Now</a>
+        </div>
+      </div>
+      
+      <div class="hero-image">
+        <div class="hero-image-wrapper">
+          <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600" alt="Beautiful woman with makeup" loading="eager">
+        </div>
+        <div class="hero-floating hero-floating-1">
+          <span>✨ Professional Staff</span>
+        </div>
+        <div class="hero-floating hero-floating-2">
+          <span>💖 Premium Quality</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Preview -->
+  <section class="section about-preview">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image fade-in">
+          <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600" alt="Salon Interior" loading="lazy">
+        </div>
+        
+        <div class="about-content fade-in">
+          <span class="section-subtitle">About Us</span>
+          <h2>Discover Your True Beauty</h2>
+          <p>Rich Tym Luxe is a premier beauty brand in Ho, Ghana, dedicated to helping clients look and feel their best. With a team of skilled professionals, we offer a wide range of beauty services tailored to meet your unique needs.</p>
+          
+          <div class="about-features">
+            <div class="about-feature">
+              <div class="about-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              </div>
+              <div class="about-feature-text">
+                <h4>Certified Experts</h4>
+                <p>Professional and certified beauty specialists</p>
+              </div>
+            </div>
+            
+            <div class="about-feature">
+              <div class="about-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M17.66 7.93L12 2.27 6.34 7.93c-3.12 3.12-3.12 8.19 0 11.31C7.9 20.8 9.95 21.58 12 21.58c2.05 0 4.1-.78 5.66-2.34 3.12-3.12 3.12-8.19 0-11.31zM12 19.59c-1.6 0-3.11-.62-4.24-1.76C6.62 16.69 6 15.19 6 13.59s.62-3.11 1.76-4.24L12 5.1v14.49z"/></svg>
+              </div>
+              <div class="about-feature-text">
+                <h4>Premium Products</h4>
+                <p>Only the best quality products used</p>
+              </div>
+            </div>
+            
+            <div class="about-feature">
+              <div class="about-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+              </div>
+              <div class="about-feature-text">
+                <h4>Flexible Hours</h4>
+                <p>Convenient appointment scheduling</p>
+              </div>
+            </div>
+          </div>
+          
+          <a href="about.html" class="btn btn-primary" style="margin-top: 20px;">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="section bg-light">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-subtitle">Our Services</span>
+        <h2 class="section-title">Beauty Services We Offer</h2>
+        <p class="section-description">From lash extensions to tattoos, we provide a comprehensive range of beauty services to enhance your natural beauty.</p>
+      </div>
+      
+      <div class="services-grid">
+        <div class="service-card fade-in">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+          </div>
+          <h3>Lash Extension</h3>
+          <p>Beautiful, natural-looking lash extensions that enhance your eyes.</p>
+          <a href="booking.html" class="btn btn-secondary">Book Now</a>
+        </div>
+        
+        <div class="service-card fade-in">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06z"/></svg>
+          </div>
+          <h3>Nail Services</h3>
+          <p>Professional manicures, pedicures, nail art, and gel applications.</p>
+          <a href="booking.html" class="btn btn-secondary">Book Now</a>
+        </div>
+        
+        <div class="service-card fade-in">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 11.75c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25zm6 0c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25z"/></svg>
+          </div>
+          <h3>Makeup</h3>
+          <p>Professional makeup services for weddings, events, and everyday glam.</p>
+          <a href="booking.html" class="btn btn-secondary">Book Now</a>
+        </div>
+        
+        <div class="service-card fade-in">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+          </div>
+          <h3>Teeth Whitening</h3>
+          <p>Brighten your smile with our professional teeth whitening treatments.</p>
+          <a href="booking.html" class="btn btn-secondary">Book Now</a>
+        </div>
+        
+        <div class="service-card fade-in">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+          </div>
+          <h3>Fashion Braces</h3>
+          <p>Trendy fashion braces to add a unique style statement.</p>
+          <a href="booking.html" class="btn btn-secondary">Book Now</a>
+        </div>
+        
+        <div class="service-card fade-in">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/></svg>
+          </div>
+          <h3>Wig Services</h3>
+          <p>Premium wig installation, styling, and maintenance services.</p>
+          <a href="booking.html" class="btn btn-secondary">Book Now</a>
+        </div>
+        
+        <div class="service-card fade-in">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M20.71 4.04c-.18-.18-.43-.29-.71-.29H4c-.28 0-.53.11-.71.29l-.04.04v14.92l.04.04c.18.18.43.29.71.29H20c.28 0 .53-.11.71-.29l.04-.04V4.08l-.04-.04z"/></svg>
+          </div>
+          <h3>Brow Lamination</h3>
+          <p>Perfect your brows with our lamination and tinting services.</p>
+          <a href="booking.html" class="btn btn-secondary">Book Now</a>
+        </div>
+        
+        <div class="service-card fade-in">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z"/></svg>
+          </div>
+          <h3>Tattoos</h3>
+          <p>Professional tattoo services with custom designs.</p>
+          <a href="booking.html" class="btn btn-secondary">Book Now</a>
+        </div>
+      </div>
+      
+      <div class="text-center" style="margin-top: 40px;">
+        <a href="services.html" class="btn btn-primary">View All Services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-subtitle">Why Choose Us</span>
+        <h2 class="section-title">The Rich Tym Luxe Difference</h2>
+        <p class="section-description">We pride ourselves on delivering exceptional beauty services with quality, safety, and customer satisfaction.</p>
+      </div>
+      
+      <div class="why-us-grid">
+        <div class="why-us-card fade-in">
+          <div class="why-us-number">01</div>
+          <h4>Expert Professionals</h4>
+          <p>Our team consists of certified and experienced beauty specialists.</p>
+        </div>
+        
+        <div class="why-us-card fade-in">
+          <div class="why-us-number">02</div>
+          <h4>Premium Products</h4>
+          <p>We use only high-quality, safe products from trusted brands.</p>
+        </div>
+        
+        <div class="why-us-card fade-in">
+          <div class="why-us-number">03</div>
+          <h4>Clean & Safe</h4>
+          <p>Strict hygiene protocols for your safety and peace of mind.</p>
+        </div>
+        
+        <div class="why-us-card fade-in">
+          <div class="why-us-number">04</div>
+          <h4>Personalized Service</h4>
+          <p>Every client is unique. We tailor services to your specific needs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section bg-pink">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-subtitle">Testimonials</span>
+        <h2 class="section-title">What Our Clients Say</h2>
+        <p class="section-description">Here's what our satisfied clients have to say about us.</p>
+      </div>
+      
+      <div class="testimonials-slider">
+        <div class="testimonial-card fade-in">
+          <p class="testimonial-text">"Absolutely love my lashes! The staff are so professional and the results are always stunning!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">AK</div>
+            <div class="testimonial-info">
+              <h5>Abena K.</h5>
+              <span>Lash Extensions</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial-card fade-in">
+          <p class="testimonial-text">"The best nail salon in Ho! My nails always look amazing. Highly recommend Rich Tym Luxe!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">EM</div>
+            <div class="testimonial-info">
+              <h5>Esther M.</h5>
+              <span>Nail Services</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial-card fade-in">
+          <p class="testimonial-text">"Made my wedding day special with their amazing makeup service. Thank you Rich Tym Luxe!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">SA</div>
+            <div class="testimonial-info">
+              <h5>Sarah A.</h5>
+              <span>Makeup</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Media -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-subtitle">Follow Us</span>
+        <h2 class="section-title">Stay Connected</h2>
+        <p class="section-description">Follow us on social media for the latest updates and special offers.</p>
+      </div>
+      
+      <div class="social-links">
+        <a href="https://www.instagram.com/richtymluxe_" target="_blank" class="social-link" title="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@richtym.luxe" target="_blank" class="social-link" title="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+        </a>
+        <a href="https://www.snapchat.com/richtym_luxe" target="_blank" class="social-link" title="Snapchat">
+          <svg viewBox="0 0 24 24" fill="#FFFC00"><path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.004.057c-.013.188-.031.377-.049.566-.269 2.723-.609 4.685-.609 4.685-.052.142-.198.219-.338.223-.139-.004-.278-.072-.37-.195-.198-.262-.321-.489-.469-.716l-.009-.014c-.417-.625-.834-1.195-1.573-1.195-.739 0-1.156.57-1.573 1.195l-.009.014c-.148.227-.271.454-.469.716-.092.123-.231.191-.37.195-.14-.004-.286-.081-.338-.223 0 0-.34-1.962-.609-4.685-.018-.189-.036-.378-.049-.566l-.004-.057c-.104-1.628-.23-3.654.299-4.847C15.553 1.069 18.91.793 19.9.793c.99 0 1.684.354 2.197.793.513.44.684 1.085.684 2.061v12.278c0 .976-.333 1.79-1.03 2.461-.646.624-1.485.928-2.509.928-1.392 0-2.128-.539-2.795-1.049l-.013.01c-.667.51-1.403 1.049-2.795 1.049-1.024 0-1.863-.304-2.509-.928-.697-.671-1.03-1.485-1.03-2.461V3.647c0-.976.171-1.621.684-2.061.513-.439 1.207-.793 2.197-.793z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/share/1b9F77KDRM/?mibextid=wwXIfr" target="_blank" class="social-link" title="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <img src="assets/images/Richtymluxe.PNG" alt="Rich Tym Luxe Logo" style="width: 50px; height: 50px; border-radius: 50%;">
+          </a>
+          <p>Your premier destination for beauty and style in Ho, Ghana.</p>
+          <div class="footer-social">
+            <a href="https://www.instagram.com/richtymluxe_" target="_blank" class="footer-social-link">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@richtym.luxe" target="_blank" class="footer-social-link">
+              <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+            </a>
+            <a href="https://www.snapchat.com/richtym_luxe" target="_blank" class="footer-social-link">
+              <svg viewBox="0 0 24 24" fill="#FFFC00"><path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.004.057c-.013.188-.031.377-.049.566-.269 2.723-.609 4.685-.609 4.685-.052.142-.198.219-.338.223-.139-.004-.278-.072-.37-.195-.198-.262-.321-.489-.469-.716l-.009-.014c-.417-.625-.834-1.195-1.573-1.195-.739 0-1.156.57-1.573 1.195l-.009.014c-.148.227-.271.454-.469.716-.092.123-.231.191-.37.195-.14-.004-.286-.081-.338-.223 0 0-.34-1.962-.609-4.685-.018-.189-.036-.378-.049-.566l-.004-.057c-.104-1.628-.23-3.654.299-4.847C15.553 1.069 18.91.793 19.9.793c.99 0 1.684.354 2.197.793.513.44.684 1.085.684 2.061v12.278c0 .976-.333 1.79-1.03 2.461-.646.624-1.485.928-2.509.928-1.392 0-2.128-.539-2.795-1.049l-.013.01c-.667.51-1.403 1.049-2.795 1.049-1.024 0-1.863-.304-2.509-.928-.697-.671-1.03-1.485-1.03-2.461V3.647c0-.976.171-1.621.684-2.061.513-.439 1.207-.793 2.197-.793z"/></svg>
+            </a>
+            <a href="https://www.facebook.com/share/1b9F77KDRM/?mibextid=wwXIfr" target="_blank" class="footer-social-link">
+              <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+          </div>
+        </div>
+        
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="shop.html">Shop</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="services.html">Lash Extension</a></li>
+            <li><a href="services.html">Nail Services</a></li>
+            <li><a href="services.html">Makeup</a></li>
+            <li><a href="services.html">Teeth Whitening</a></li>
+            <li><a href="services.html">Wig Services</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-contact">
+          <h4>Contact Us</h4>
+          <ul>
+            <li>
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+              <span>Opp. Global FM @ NDC Park, Ho, Ghana</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+              <span>0597705175</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
+              <span>richtymluxe26@gmail.com</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 Rich Tym Luxe. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp Float -->
+  <div class="whatsapp-float">
+    <a href="https://wa.me/0503390421" class="whatsapp-btn" title="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+    <a href="https://wa.me/0597705175" class="whatsapp-btn" title="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay"></div>
+  <div class="cart-sidebar">
+    <div class="cart-header">
+      <h3>Shopping Cart</h3>
+      <div class="cart-close" onclick="closeCart()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </div>
+    </div>
+    <div class="cart-items">
+      <div class="cart-empty">
+        <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        <p>Your cart is empty</p>
+      </div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total:</span>
+        <strong>GH₵ 0</strong>
+      </div>
+      <button class="cart-whatsapp-btn" onclick="sendToWhatsApp()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Order via WhatsApp
+      </button>
+      <button class="cart-paystack-btn" onclick="initPaystack()">
+        Pay with Paystack
+      </button>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox">
+    <div class="lightbox-close">
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </div>
+    <div class="lightbox-content">
+      <img src="" alt="Gallery Image">
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
