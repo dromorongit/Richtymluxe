@@ -70,81 +70,8 @@
         <p class="section-description">Discover our curated collection of stylish unisex clothing pieces.</p>
       </div>
       
-      <div class="shop-grid">
-        <!-- Product 1 -->
-        <div class="product-card fade-in">
-          <div class="product-image">
-            <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400" alt="Premium Hoodie">
-            <span class="product-badge">Best Seller</span>
-          </div>
-          <div class="product-info">
-            <h3>Unisex Premium Hoodie</h3>
-            <p class="product-price">GH₵ 350</p>
-            <button class="product-btn" onclick="addToCart(1)">Add to Cart</button>
-          </div>
-        </div>
-        
-        <!-- Product 2 -->
-        <div class="product-card fade-in">
-          <div class="product-image">
-            <img src="https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400" alt="Elegant Summer Dress">
-          </div>
-          <div class="product-info">
-            <h3>Elegant Summer Dress</h3>
-            <p class="product-price">GH₵ 280</p>
-            <button class="product-btn" onclick="addToCart(2)">Add to Cart</button>
-          </div>
-        </div>
-        
-        <!-- Product 3 -->
-        <div class="product-card fade-in">
-          <div class="product-image">
-            <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400" alt="Classic White Shirt">
-            <span class="product-badge">New</span>
-          </div>
-          <div class="product-info">
-            <h3>Classic White Shirt</h3>
-            <p class="product-price">GH₵ 180</p>
-            <button class="product-btn" onclick="addToCart(3)">Add to Cart</button>
-          </div>
-        </div>
-        
-        <!-- Product 4 -->
-        <div class="product-card fade-in">
-          <div class="product-image">
-            <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400" alt="Designer Jacket">
-          </div>
-          <div class="product-info">
-            <h3>Designer Jacket</h3>
-            <p class="product-price">GH₵ 450 <span>GH₵ 550</span></p>
-            <button class="product-btn" onclick="addToCart(4)">Add to Cart</button>
-          </div>
-        </div>
-        
-        <!-- Product 5 -->
-        <div class="product-card fade-in">
-          <div class="product-image">
-            <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400" alt="Casual Blazer">
-            <span class="product-badge">Sale</span>
-          </div>
-          <div class="product-info">
-            <h3>Casual Blazer</h3>
-            <p class="product-price">GH₵ 320</p>
-            <button class="product-btn" onclick="addToCart(5)">Add to Cart</button>
-          </div>
-        </div>
-        
-        <!-- Product 6 -->
-        <div class="product-card fade-in">
-          <div class="product-image">
-            <img src="https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=400" alt="Luxury Silk Top">
-          </div>
-          <div class="product-info">
-            <h3>Luxury Silk Top</h3>
-            <p class="product-price">GH₵ 220</p>
-            <button class="product-btn" onclick="addToCart(6)">Add to Cart</button>
-          </div>
-        </div>
+      <div class="shop-grid" id="product-container">
+        <!-- Products loaded dynamically from API -->
       </div>
     </div>
   </section>
@@ -257,5 +184,13 @@
   </div>
 
   <script src="assets/js/main.js"></script>
+  <script>
+    // Load boutique products when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof loadProductsToPage === 'function') {
+        loadProductsToPage('boutique');
+      }
+    });
+  </script>
 </body>
 </html>

@@ -640,9 +640,11 @@
   
   <script>
     // ========================================
-    // Mobile Phones Product Data
+    // Mobile Phones - Try API, fallback to local
     // ========================================
-    const phoneProducts = [
+    
+    // Default local products (fallback if API unavailable)
+    const localPhoneProducts = [
       {
         id: 101,
         name: 'iPhone 14 Pro',
@@ -707,6 +709,8 @@
         colorOptions: ['White']
       }
     ];
+    
+    let phoneProducts = localPhoneProducts;
 
     // Modal State
     let currentProduct = null;
@@ -920,7 +924,29 @@
     // ========================================
     // Initialize
     // ========================================
-    document.addEventListener('DOMContentLoaded', function() {
+    async function initPhones() {
+      // Try to fetch from API
+      try {
+        const response = await fetch('/api/products/mobile');
+        if (response.ok) {
+          const apiProducts = await response.json();
+          if (apiProducts.length > 0) {
+            // Convert API products to phone format
+            phoneProducts = apiProducts.map((p, index) => ({
+              id: p._id || 100 + index,
+              name: p.productName,
+              image: p.coverImage || 'assets/images/placeholder.jpg',
+              basePrice: p.salesPrice || p.originalPrice || 0,
+              shortDescription: p.shortDescription,
+              storageOptions: [],
+              colorOptions: []
+            }));
+          }
+        }
+      } catch (error) {
+        console.log('Using local phone data');
+      }
+      
       renderPhones();
       
       // ESC key to close modal
@@ -929,7 +955,9 @@
           closeProductModal();
         }
       });
-    });
+    }
+
+    document.addEventListener('DOMContentLoaded', initPhones);
 
     // Make functions globally available
     window.openProductModal = openProductModal;

@@ -4,33 +4,15 @@
  */
 
 // ========================================
-// DOM Elements
+// API Configuration
 // ========================================
-const header = document.querySelector('.header');
-const navToggle = document.querySelector('.nav-toggle');
-const navMenu = document.querySelector('.nav-menu');
-const cartBtn = document.querySelector('.cart-btn');
-const cartSidebar = document.querySelector('.cart-sidebar');
-const cartOverlay = document.querySelector('.cart-overlay');
-const cartClose = document.querySelector('.cart-close');
-const lightbox = document.querySelector('.lightbox');
-const lightboxImg = document.querySelector('.lightbox-content img');
-const lightboxClose = document.querySelector('.lightbox-close');
-const filterBtns = document.querySelectorAll('.filter-btn');
-const galleryItems = document.querySelectorAll('.gallery-item');
+const API_BASE = '/api';
 
 // ========================================
 // Cart System
 // ========================================
 let cart = [];
-let products = [
-  { id: 1, name: 'Unisex Premium Hoodie', price: 350, image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400', category: 'clothing' },
-  { id: 2, name: 'Elegant Summer Dress', price: 280, image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400', category: 'clothing' },
-  { id: 3, name: 'Classic White Shirt', price: 180, image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400', category: 'clothing' },
-  { id: 4, name: 'Designer Jacket', price: 450, image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400', category: 'clothing' },
-  { id: 5, name: 'Casual Blazer', price: 320, image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400', category: 'clothing' },
-  { id: 6, name: 'Luxury Silk Top', price: 220, image: 'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=400', category: 'clothing' }
-];
+let products = [];
 
 // Initialize cart
 function initCart() {
@@ -45,6 +27,94 @@ function initCart() {
     console.log('Cart initialization error:', e);
     cart = [];
   }
+}
+
+// ========================================
+// Product Fetching from API
+// ========================================
+async function fetchProducts(type = 'boutique') {
+  try {
+    const response = await fetch(`${API_BASE}/products/${type}`);
+    if (response.ok) {
+      return await response.json();
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return [];
+  }
+}
+
+function renderProductCard(product) {
+  const priceDisplay = product.salesPrice 
+    ? `<span>GH₵ ${product.salesPrice}</span>${product.originalPrice ? `<span>GH₵ ${product.originalPrice}</span>` : ''}`
+    : product.originalPrice 
+      ? `<span>GH₵ ${product.originalPrice}</span>`
+      : '<span>Contact for price</span>';
+
+  let badges = '';
+  if (product.discountPercentage > 0) {
+    badges += `<span class="product-badge">Sale -${product.discountPercentage}%</span>`;
+  }
+  if (product.isNew) {
+    badges += `<span class="product-badge">New</span>`;
+  }
+  if (product.isBestseller) {
+    badges += `<span class="product-badge">Best Seller</span>`;
+  }
+
+  const imageUrl = product.coverImage || 'assets/images/placeholder.jpg';
+
+  return `
+    <div class="product-card fade-in" data-product-id="${product._id}">
+      <div class="product-image">
+        <img src="${imageUrl}" alt="${product.productName}" loading="lazy">
+        ${badges}
+      </div>
+      <div class="product-info">
+        <h3>${product.productName}</h3>
+        <p class="product-price">${priceDisplay}</p>
+        <button class="product-btn" onclick="addProductToCart('${product._id}')">Add to Cart</button>
+      </div>
+    </div>
+  `;
+}
+
+function addProductToCart(productId) {
+  const product = products.find(p => p._id === productId);
+  if (product) {
+    const price = product.salesPrice || product.originalPrice || 0;
+    const cartProduct = {
+      id: product._id,
+      name: product.productName,
+      price: price,
+      image: product.coverImage || ''
+    };
+    const existingItem = cart.find(item => item.id === productId);
+    if (existingItem) {
+      existingItem.qty++;
+    } else {
+      cart.push({ ...cartProduct, qty: 1 });
+    }
+    saveCart();
+    openCart();
+  }
+}
+
+async function loadProductsToPage(productType) {
+  const container = document.getElementById('product-container');
+  if (!container) return;
+
+  container.innerHTML = '<div class="loading">Loading products...</div>';
+
+  products = await fetchProducts(productType);
+
+  if (products.length === 0) {
+    container.innerHTML = '<div class="no-products">No products available. Check back soon!</div>';
+    return;
+  }
+
+  container.innerHTML = products.map(product => renderProductCard(product)).join('');
 }
 
 // Save cart
@@ -556,3 +626,6 @@ window.openCart = openCart;
 window.closeCart = closeCart;
 window.toggleNav = toggleNav;
 window.closeNav = closeNav;
+window.addProductToCart = addProductToCart;
+window.loadProductsToPage = loadProductsToPage;
+window.fetchProducts = fetchProducts;
