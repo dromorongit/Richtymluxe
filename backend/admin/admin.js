@@ -37,6 +37,8 @@ const addAdditionalImageBtn = document.getElementById('addAdditionalImage');
 const additionalImagesInput = document.getElementById('additionalImages');
 const menuToggle = document.querySelector('.menu-toggle');
 const sidebar = document.querySelector('.sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const closeSidebar = document.getElementById('closeSidebar');
 const navItems = document.querySelectorAll('.nav-item');
 const pageTitle = document.getElementById('pageTitle');
 
@@ -91,6 +93,30 @@ function setupEventListeners() {
     document.getElementById('productType').addEventListener('change', function() {
         updateCategoryOptions(this.value);
     });
+    
+    // Mobile sidebar toggle
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            if (sidebarOverlay) sidebarOverlay.classList.add('active');
+        });
+    }
+    
+    // Close sidebar via overlay
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+    }
+    
+    // Close sidebar via button
+    if (closeSidebar) {
+        closeSidebar.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+        });
+    }
     
     // Modal controls
     closeModal.addEventListener('click', closeProductModal);
@@ -631,6 +657,12 @@ function handleNavigation(view) {
             item.classList.add('active');
         }
     });
+    
+    // Close mobile sidebar when navigating
+    if (window.innerWidth < 1024) {
+        sidebar.classList.remove('active');
+        if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+    }
     
     // Update page title
     switch(view) {

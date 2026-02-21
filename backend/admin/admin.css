@@ -994,10 +994,26 @@ body {
 @media (max-width: 1024px) {
     .sidebar {
         transform: translateX(-100%);
+        transition: transform 0.3s ease;
     }
     
     .sidebar.active {
         transform: translateX(0);
+    }
+    
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
     }
     
     .main-content {
@@ -1007,6 +1023,28 @@ body {
     .menu-toggle {
         display: block;
     }
+    
+    .close-sidebar {
+        display: block;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: var(--text-dark);
+        cursor: pointer;
+    }
+}
+
+/* Mobile Overlay */
+.sidebar-overlay {
+    display: none;
+}
+
+/* Close sidebar button on mobile */
+.close-sidebar {
+    display: none;
 }
 
 @media (max-width: 768px) {
@@ -1023,8 +1061,83 @@ body {
         grid-template-columns: 1fr;
     }
     
+    /* Make table horizontally scrollable without breaking layout */
+    .products-table-container {
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+    
     .products-table {
-        display: block;
-        overflow-x: auto;
+        min-width: 700px;
+    }
+    
+    /* Modal full screen on mobile */
+    .modal-content {
+        max-width: 100%;
+        max-height: 100%;
+        height: 100%;
+        border-radius: 0;
+        margin: 0;
+    }
+    
+    .modal {
+        align-items: flex-start;
+        padding: 0;
+    }
+    
+    .product-form {
+        padding: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .form-actions button {
+        width: 100%;
+    }
+    
+    /* Toast on mobile */
+    .toast {
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        transform: translateY(100px);
+    }
+    
+    .toast.show {
+        transform: translateY(0);
+    }
+    
+    /* Login box on mobile */
+    .login-box {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    
+    /* Header on mobile */
+    .top-header {
+        padding: 15px 20px;
+    }
+    
+    .header-left h1 {
+        font-size: 18px;
+    }
+    
+    /* View section on mobile */
+    .view-section {
+        padding: 20px;
+    }
+    
+    /* Checkbox group on mobile */
+    .checkbox-group {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    /* Image upload on mobile */
+    .additional-images-preview {
+        justify-content: center;
     }
 }
