@@ -640,334 +640,112 @@
   
   <script>
     // ========================================
-    // Mobile Phones - API Configuration
+    // Mobile Phones - Simplified to use main.js
     // ========================================
-    const API_BASE = 'https://richtymluxe-production.up.railway.app/api';
     
-    // Default local products (fallback if API unavailable)
-    const localPhoneProducts = [
-      {
-        id: 101,
-        name: 'iPhone 14 Pro',
-        image: 'assets/images/iphone14pro.jpg',
-        basePrice: 8500,
-        storageOptions: [
-          { label: '128GB', priceModifier: 0 },
-          { label: '256GB', priceModifier: 500 }
-        ],
-        colorOptions: ['Black', 'Silver', 'Gold']
-      },
-      {
-        id: 102,
-        name: 'iPhone 13 Pro',
-        image: 'assets/images/iphone13pro.jpg',
-        basePrice: 6500,
-        storageOptions: [
-          { label: '128GB', priceModifier: 0 },
-          { label: '256GB', priceModifier: 400 }
-        ],
-        colorOptions: ['Graphite', 'Silver', 'Blue']
-      },
-      {
-        id: 103,
-        name: 'iPhone X',
-        image: 'assets/images/iphonex.jpg',
-        basePrice: 3500,
-        storageOptions: [
-          { label: '64GB', priceModifier: 0 },
-          { label: '256GB', priceModifier: 300 }
-        ],
-        colorOptions: ['Black', 'White']
-      },
-      {
-        id: 104,
-        name: 'iPhone 11',
-        image: 'assets/images/iphone11.jpg',
-        basePrice: 2800,
-        storageOptions: [
-          { label: '64GB', priceModifier: 0 },
-          { label: '128GB', priceModifier: 250 }
-        ],
-        colorOptions: ['Black', 'Red', 'White']
-      },
-      {
-        id: 105,
-        name: 'iPhone 14 Plus',
-        image: 'assets/images/iphone14plus.jpg',
-        basePrice: 7800,
-        storageOptions: [
-          { label: '128GB', priceModifier: 0 },
-          { label: '256GB', priceModifier: 500 }
-        ],
-        colorOptions: ['Midnight', 'Blue', 'Purple']
-      },
-      {
-        id: 106,
-        name: 'Apple AirPods',
-        image: 'assets/images/appleairpods.jpg',
-        basePrice: 800,
-        storageOptions: [],
-        colorOptions: ['White']
+    // Override the default renderProductCard for mobile phones format
+    const originalRenderProductCard = renderProductCard;
+    
+    function renderMobileProductCard(product) {
+      const priceDisplay = product.salesPrice 
+        ? `<span>GH₵ ${product.salesPrice}</span>${product.originalPrice ? `<span>GH₵ ${product.originalPrice}</span>` : ''}`
+        : product.originalPrice 
+          ? `<span>GH₵ ${product.originalPrice}</span>`
+          : '<span>Contact for price</span>';
+
+      let badges = '';
+      if (product.discountPercentage > 0) {
+        badges += `<span class="product-badge">Sale -${product.discountPercentage}%</span>`;
       }
-    ];
-    
-    let phoneProducts = localPhoneProducts;
+      if (product.isNew) {
+        badges += `<span class="product-badge">New</span>`;
+      }
+      if (product.isBestseller) {
+        badges += `<span class="product-badge">Best Seller</span>`;
+      }
 
-    // Modal State
-    let currentProduct = null;
-    let selectedStorage = null;
-    let selectedColor = null;
-    let modalQty = 1;
+      const imageUrl = product.coverImage || 'assets/images/placeholder.jpg';
 
-    // ========================================
-    // Render Products
-    // ========================================
-    function renderPhones() {
-      const grid = document.getElementById('phonesGrid');
-      if (!grid) return;
-
-      grid.innerHTML = phoneProducts.map(product => {
-        const priceDisplay = product.basePrice.toLocaleString('en-GH');
-        return `
-          <div class="phone-card" onclick="openProductModal(${product.id})">
-            <div class="phone-image">
-              <img src="${product.image}" alt="${product.name}" loading="lazy">
-              <span class="phone-badge">New</span>
-            </div>
-            <div class="phone-info">
-              <h3>${product.name}</h3>
-              <div class="phone-price">GH₵ ${priceDisplay}</div>
-              <button class="view-details-btn" onclick="event.stopPropagation(); openProductModal(${product.id})">
-                View Details
-              </button>
-            </div>
+      return `
+        <div class="phone-card" onclick="openProductModal('${product._id}')">
+          <div class="phone-image">
+            <img src="${imageUrl}" alt="${product.productName}" loading="lazy">
+            ${badges}
           </div>
-        `;
-      }).join('');
-    }
-
-    // ========================================
-    // Modal Functions
-    // ========================================
-    function openProductModal(productId) {
-      currentProduct = phoneProducts.find(p => p.id === productId);
-      if (!currentProduct) return;
-
-      // Reset selections
-      selectedStorage = currentProduct.storageOptions.length > 0 ? currentProduct.storageOptions[0] : null;
-      selectedColor = currentProduct.colorOptions.length > 0 ? currentProduct.colorOptions[0] : null;
-      modalQty = 1;
-
-      // Update modal content
-      document.getElementById('modalImage').src = currentProduct.image;
-      document.getElementById('modalTitle').textContent = currentProduct.name;
-      
-      // Render storage options
-      const storageSection = document.getElementById('storageSection');
-      const storageOptions = document.getElementById('storageOptions');
-      
-      if (currentProduct.storageOptions.length > 0) {
-        storageSection.style.display = 'block';
-        storageOptions.innerHTML = currentProduct.storageOptions.map((opt, index) => `
-          <button class="storage-btn ${index === 0 ? 'active' : ''}" onclick="selectStorage(${index})">
-            ${opt.label} ${opt.priceModifier > 0 ? `+GH₵${opt.priceModifier}` : ''}
-          </button>
-        `).join('');
-      } else {
-        storageSection.style.display = 'none';
-      }
-
-      // Render color options
-      const colorSection = document.getElementById('colorSection');
-      const colorOptions = document.getElementById('colorOptions');
-      
-      if (currentProduct.colorOptions.length > 0) {
-        colorSection.style.display = 'block';
-        colorOptions.innerHTML = currentProduct.colorOptions.map((color, index) => {
-          const colorClass = color.toLowerCase();
-          return `
-            <button class="color-btn ${colorClass} ${index === 0 ? 'active' : ''}" 
-                    data-color="${color}" 
-                    onclick="selectColor('${color}')"
-                    title="${color}">
+          <div class="phone-info">
+            <h3>${product.productName}</h3>
+            <div class="phone-price">${priceDisplay}</div>
+            <button class="view-details-btn" onclick="event.stopPropagation(); openProductModal('${product._id}')">
+              View Details
             </button>
-          `;
-        }).join('');
-      } else {
-        colorSection.style.display = 'none';
+          </div>
+        </div>
+      `;
+    }
+
+    // Override loadProductsToPage for mobile phones
+    async function loadMobileProductsToPage(productType) {
+      const container = document.getElementById('product-container');
+      if (!container) {
+        // Try phonesGrid for mobile-phones.html
+        const grid = document.getElementById('phonesGrid');
+        if (!grid) return;
+        
+        grid.innerHTML = '<div class="loading">Loading products...</div>';
+        
+        try {
+          const response = await fetch(`${API_BASE}/products/${productType}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.length === 0) {
+              grid.innerHTML = '<div class="no-products">No products available. Check back soon!</div>';
+              return;
+            }
+            products = data;
+            grid.innerHTML = data.map(product => renderMobileProductCard(product)).join('');
+          }
+        } catch (error) {
+          console.error('Error fetching products:', error);
+          grid.innerHTML = '<div class="no-products">Error loading products. Please try again!</div>';
+        }
+        return;
       }
 
-      // Update price and quantity display
-      updateModalPrice();
-      document.getElementById('modalQty').textContent = modalQty;
+      container.innerHTML = '<div class="loading">Loading products...</div>';
 
-      // Show modal
-      const modal = document.getElementById('productModal');
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeProductModal() {
-      const modal = document.getElementById('productModal');
-      modal.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    function selectStorage(index) {
-      selectedStorage = currentProduct.storageOptions[index];
-      
-      // Update UI
-      const buttons = document.querySelectorAll('.storage-btn');
-      buttons.forEach((btn, i) => {
-        btn.classList.toggle('active', i === index);
-      });
-      
-      updateModalPrice();
-    }
-
-    function selectColor(color) {
-      selectedColor = color;
-      
-      // Update UI
-      const buttons = document.querySelectorAll('.color-btn');
-      buttons.forEach((btn) => {
-        const btnColor = btn.getAttribute('data-color');
-        btn.classList.toggle('active', btnColor === color);
-      });
-    }
-
-    function changeModalQty(change) {
-      modalQty += change;
-      if (modalQty < 1) modalQty = 1;
-      document.getElementById('modalQty').textContent = modalQty;
-      updateModalPrice();
-    }
-
-    function updateModalPrice() {
-      let price = currentProduct.basePrice;
-      if (selectedStorage) {
-        price += selectedStorage.priceModifier;
-      }
-      const finalPrice = price * modalQty;
-      
-      const priceEl = document.getElementById('modalPrice');
-      priceEl.innerHTML = `GH₵ ${finalPrice.toLocaleString('en-GH')}`;
-    }
-
-    function calculateFinalPrice() {
-      let price = currentProduct.basePrice;
-      if (selectedStorage) {
-        price += selectedStorage.priceModifier;
-      }
-      return price * modalQty;
-    }
-
-    // ========================================
-    // Cart Integration
-    // ========================================
-    function addToCartFromModal() {
-      if (!currentProduct) return;
-
-      const cartItem = {
-        id: currentProduct.id,
-        name: currentProduct.name,
-        image: currentProduct.image,
-        price: calculateFinalPrice(),
-        qty: modalQty,
-        storage: selectedStorage ? selectedStorage.label : 'N/A',
-        color: selectedColor || 'N/A',
-        variant: `${selectedStorage ? selectedStorage.label : ''} ${selectedColor || ''}`.trim()
-      };
-
-      // Check if item with same variant exists
-      const existingIndex = cart.findIndex(item => 
-        item.id === cartItem.id && 
-        item.storage === cartItem.storage && 
-        item.color === cartItem.color
-      );
-
-      if (existingIndex >= 0) {
-        cart[existingIndex].qty += modalQty;
-      } else {
-        cart.push(cartItem);
+      try {
+        const response = await fetch(`${API_BASE}/products/${productType}`);
+        if (response.ok) {
+          products = await response.json();
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
       }
 
-      saveCart();
-      closeProductModal();
-      openCart();
-    }
+      if (products.length === 0) {
+        container.innerHTML = '<div class="no-products">No products available. Check back soon!</div>';
+        return;
+      }
 
-    function buyNowFromModal() {
-      if (!currentProduct) return;
-
-      const finalPrice = calculateFinalPrice();
-      const storageText = selectedStorage ? selectedStorage.label : 'N/A';
-      const colorText = selectedColor || 'N/A';
-
-      const message = `*📱 New Order - Rich Tym Luxe*\n\n` +
-        `*Product:* ${currentProduct.name}\n` +
-        `*Storage:* ${storageText}\n` +
-        `*Color:* ${colorText}\n` +
-        `*Quantity:* ${modalQty}\n` +
-        `*Total Price:* GH₵ ${finalPrice.toLocaleString('en-GH')}\n\n` +
-        `--- Customer Details ---\n` +
-        `Name: \n` +
-        `Address: \n` +
-        `Phone: `;
-
-      const encodedMessage = encodeURIComponent(message);
-      
-      // Use first available WhatsApp number
-      const phoneNumber = '0597705175';
-      window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+      container.innerHTML = products.map(product => renderMobileProductCard(product)).join('');
     }
 
     // ========================================
     // Initialize
     // ========================================
-    async function initPhones() {
-      // Try to fetch from API
-      try {
-        const response = await fetch(`${API_BASE}/products/mobile`);
-        if (response.ok) {
-          const apiProducts = await response.json();
-          if (apiProducts.length > 0) {
-            // Convert API products to phone format
-            phoneProducts = apiProducts.map((p, index) => ({
-              id: p._id || 100 + index,
-              name: p.productName,
-              image: p.coverImage || 'assets/images/placeholder.jpg',
-              basePrice: p.salesPrice || p.originalPrice || 0,
-              shortDescription: p.shortDescription,
-              storageOptions: [],
-              colorOptions: []
-            }));
-          }
-        }
-      } catch (error) {
-        console.log('Using local phone data');
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+      loadMobileProductsToPage('mobile');
+      initCart();
+    });
+    
+    // Make function globally available
+    window.openProductModal = function(productId) {
+      const product = products.find(p => p._id === productId);
+      if (!product) return;
       
-      renderPhones();
-      
-      // ESC key to close modal
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          closeProductModal();
-        }
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', initPhones);
-
-    // Make functions globally available
-    window.openProductModal = openProductModal;
-    window.closeProductModal = closeProductModal;
-    window.selectStorage = selectStorage;
-    window.selectColor = selectColor;
-    window.changeModalQty = changeModalQty;
-    window.addToCartFromModal = addToCartFromModal;
-    window.buyNowFromModal = buyNowFromModal;
+      // Simple alert for now - can be enhanced later
+      alert(`Product: ${product.productName}\nPrice: GH₵ ${product.salesPrice || product.originalPrice}\n\nContact us to order!`);
+    };
   </script>
 </body>
 </html>
