@@ -1114,11 +1114,15 @@ p { color: var(--gray); margin-bottom: 1rem; }
   margin-bottom: 12px;
 }
 
-.product-price span {
+.product-price .original-price {
   font-size: 0.8rem;
   color: var(--gray);
   text-decoration: line-through;
   margin-left: 6px;
+}
+
+.product-price span:not(.original-price) {
+  display: inline-block;
 }
 
 .product-btn {

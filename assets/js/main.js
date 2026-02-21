@@ -47,7 +47,7 @@ async function fetchProducts(type = 'boutique') {
 
 function renderProductCard(product) {
   const priceDisplay = product.salesPrice 
-    ? `<span>GH₵ ${product.salesPrice}</span>${product.originalPrice ? `<span>GH₵ ${product.originalPrice}</span>` : ''}`
+    ? `<span>GH₵ ${product.salesPrice}</span>${product.originalPrice ? `<span class="original-price">GH₵ ${product.originalPrice}</span>` : ''}`
     : product.originalPrice 
       ? `<span>GH₵ ${product.originalPrice}</span>`
       : '<span>Contact for price</span>';

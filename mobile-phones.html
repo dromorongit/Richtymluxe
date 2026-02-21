@@ -647,11 +647,20 @@
     const originalRenderProductCard = renderProductCard;
     
     function renderMobileProductCard(product) {
-      const priceDisplay = product.salesPrice 
-        ? `<span>GH₵ ${product.salesPrice}</span>${product.originalPrice ? `<span>GH₵ ${product.originalPrice}</span>` : ''}`
-        : product.originalPrice 
-          ? `<span>GH₵ ${product.originalPrice}</span>`
-          : '<span>Contact for price</span>';
+      // Price logic: only show as slashed if there's a sales price
+      let priceDisplay = '';
+      if (product.salesPrice && product.originalPrice) {
+        // Both prices - show sales price with original slashed
+        priceDisplay = `<span>GH₵ ${product.salesPrice}</span><span class="original-price">GH₵ ${product.originalPrice}</span>`;
+      } else if (product.salesPrice) {
+        // Only sales price
+        priceDisplay = `<span>GH₵ ${product.salesPrice}</span>`;
+      } else if (product.originalPrice) {
+        // Only original price - show without slash
+        priceDisplay = `<span>GH₵ ${product.originalPrice}</span>`;
+      } else {
+        priceDisplay = '<span>Contact for price</span>';
+      }
 
       let badges = '';
       if (product.discountPercentage > 0) {
