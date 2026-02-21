@@ -6,7 +6,7 @@
 // ========================================
 // API Configuration
 // ========================================
-const API_BASE = '/api';
+const API_BASE = 'https://richtymluxe-production.up.railway.app/api';
 
 // ========================================
 // Cart System

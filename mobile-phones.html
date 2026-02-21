@@ -640,8 +640,9 @@
   
   <script>
     // ========================================
-    // Mobile Phones - Try API, fallback to local
+    // Mobile Phones - API Configuration
     // ========================================
+    const API_BASE = 'https://richtymluxe-production.up.railway.app/api';
     
     // Default local products (fallback if API unavailable)
     const localPhoneProducts = [
@@ -927,7 +928,7 @@
     async function initPhones() {
       // Try to fetch from API
       try {
-        const response = await fetch('/api/products/mobile');
+        const response = await fetch(`${API_BASE}/products/mobile`);
         if (response.ok) {
           const apiProducts = await response.json();
           if (apiProducts.length > 0) {
