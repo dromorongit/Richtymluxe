@@ -18,27 +18,27 @@ const seedAdmin = async () => {
   
   try {
     // Check if admin exists
-    const existingAdmin = await Admin.findOne({ username: 'admin' });
+    const existingAdmin = await Admin.findOne({ username: 'AdminRichtymluxe' });
     
     if (existingAdmin) {
       console.log('Admin user already exists');
     } else {
-      // Create default admin
+      // Create admin with specified credentials
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('admin123', salt);
+      const hashedPassword = await bcrypt.hash('2gABCD2026@#off', salt);
       
       const admin = new Admin({
-        username: 'admin',
+        username: 'AdminRichtymluxe',
         email: 'admin@richtymluxe.com',
         password: hashedPassword,
-        fullName: 'Administrator',
+        fullName: 'Richtymluxe Administrator',
         role: 'superadmin'
       });
       
       await admin.save();
       console.log('Admin user created successfully');
-      console.log('Username: admin');
-      console.log('Password: admin123');
+      console.log('Username: AdminRichtymluxe');
+      console.log('Password: 2gABCD2026@#off');
     }
   } catch (error) {
     console.error('Error seeding admin:', error);
