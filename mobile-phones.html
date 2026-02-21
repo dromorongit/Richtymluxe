@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="description" content="Rich Tym Luxe | Premium Mobile Phones in Ho, Ghana. Shop iPhones with variant selection and fast delivery.">
+  <meta name="keywords" content="iPhone shop Ho Ghana, mobile phones Ho, Rich Tym Luxe phones, Apple products Ghana">
+  <meta name="theme-color" content="#ff69b4">
+  <title>Mobile Phones | Rich Tym Luxe</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/Richtymluxe.PNG">
+  
+  <style>
+    /* Mobile Phones Page Specific Styles */
+    .phones-hero {
+      background: linear-gradient(135deg, #fff5f8 0%, #ffe4ec 50%, #ffd4e5 100%);
+      padding: 120px 0 50px;
+      text-align: center;
+    }
+    
+    .phones-hero h1 {
+      font-size: clamp(2rem, 6vw, 3rem);
+      margin-bottom: 12px;
+      background: var(--pink-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .phones-hero p {
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .phones-section {
+      padding: 60px 0;
+    }
+    
+    .phones-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .phone-card {
+      background: var(--accent);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    
+    .phone-card:active {
+      transform: scale(0.99);
+    }
+    
+    .phone-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .phone-image {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--light-gray);
+    }
+    
+    .phone-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    
+    .phone-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--secondary);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    
+    .phone-info {
+      padding: 16px;
+    }
+    
+    .phone-info h3 {
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    
+    .phone-price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    
+    .phone-price span {
+      font-size: 0.8rem;
+      color: var(--gray);
+      text-decoration: line-through;
+      margin-left: 6px;
+    }
+    
+    .view-details-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--pink-gradient);
+      color: var(--accent);
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+      min-height: 44px;
+    }
+    
+    .view-details-btn:active {
+      transform: scale(0.98);
+    }
+    
+    /* Product Modal */
+    .product-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .product-modal.active {
+      display: flex;
+    }
+    
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+    
+    .modal-content {
+      position: relative;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
+      animation: modalFadeIn 0.3s ease;
+    }
+    
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      background: var(--light-gray);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: var(--transition);
+    }
+    
+    .modal-close:active {
+      transform: scale(0.95);
+    }
+    
+    .modal-close svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--dark);
+    }
+    
+    .modal-image {
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--light-gray);
+      border-radius: 24px 24px 0 0;
+    }
+    
+    .modal-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .modal-body {
+      padding: 24px;
+    }
+    
+    .modal-title {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    
+    .modal-price {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    
+    .modal-price .original-price {
+      font-size: 1rem;
+      color: var(--gray);
+      text-decoration: line-through;
+      margin-left: 10px;
+    }
+    
+    /* Variant Selection */
+    .variant-section {
+      margin-bottom: 20px;
+    }
+    
+    .variant-label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+    
+    .storage-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .storage-btn {
+      padding: 10px 20px;
+      background: var(--accent);
+      border: 2px solid var(--primary-light);
+      border-radius: 25px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+      min-height: 44px;
+    }
+    
+    .storage-btn:active {
+      transform: scale(0.98);
+    }
+    
+    .storage-btn.active {
+      background: var(--pink-gradient);
+      color: var(--accent);
+      border-color: transparent;
+    }
+    
+    .color-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .color-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 3px solid transparent;
+      position: relative;
+    }
+    
+    .color-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .color-btn.active {
+      border-color: var(--primary);
+    }
+    
+    .color-btn::after {
+      content: attr(data-color);
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: var(--gray);
+      white-space: nowrap;
+    }
+    
+    .color-btn.white {
+      background: #ffffff;
+      border-color: #ddd;
+    }
+    
+    .color-btn.black {
+      background: #1a1a1a;
+    }
+    
+    .color-btn.silver {
+      background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+    }
+    
+    .color-btn.gold {
+      background: linear-gradient(135deg, #d4af37, #f4e4ba);
+    }
+    
+    .color-btn.graphite {
+      background: linear-gradient(135deg, #3d3d3d, #5a5a5a);
+    }
+    
+    .color-btn.blue {
+      background: linear-gradient(135deg, #007aff, #5ac8fa);
+    }
+    
+    .color-btn.midnight {
+      background: linear-gradient(135deg, #1a2a3a, #2a3a4a);
+    }
+    
+    .color-btn.purple {
+      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+    }
+    
+    .color-btn.red {
+      background: linear-gradient(135deg, #ef4444, #f87171);
+    }
+    
+    /* Quantity Selector */
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .qty-btn {
+      width: 44px;
+      height: 44px;
+      background: var(--light-gray);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.2rem;
+      transition: var(--transition);
+    }
+    
+    .qty-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .qty-value {
+      font-size: 1.2rem;
+      font-weight: 600;
+      min-width: 40px;
+      text-align: center;
+    }
+    
+    /* Action Buttons */
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .add-to-cart-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--pink-gradient);
+      color: var(--accent);
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .add-to-cart-btn:active {
+      transform: scale(0.98);
+    }
+    
+    .add-to-cart-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--accent);
+    }
+    
+    .buy-now-btn {
+      width: 100%;
+      padding: 16px;
+      background: #25d366;
+      color: var(--accent);
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .buy-now-btn:active {
+      transform: scale(0.98);
+    }
+    
+    .buy-now-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--accent);
+    }
+    
+    /* Tablet Styles */
+    @media (min-width: 768px) {
+      .phones-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      
+      .modal-content {
+        max-width: 600px;
+      }
+    }
+    
+    /* Desktop Styles */
+    @media (min-width: 1024px) {
+      .phones-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+    }
+    
+    /* Mobile Full Width Modal */
+    @media (max-width: 480px) {
+      .product-modal {
+        padding: 0;
+        align-items: flex-end;
+      }
+      
+      .modal-content {
+        max-width: 100%;
+        max-height: 95vh;
+        border-radius: 24px 24px 0 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="assets/images/Richtymluxe.PNG" alt="Rich Tym Luxe Logo">
+      </a>
+      
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="gallery.html" class="nav-link">Gallery</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="mobile-phones.html" class="nav-link active">Phones</a>
+        <a href="booking.html" class="nav-link">Book Now</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+      
+      <div class="nav-actions">
+        <button class="cart-btn" onclick="openCart()">
+          <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          <span class="cart-count" style="display: none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="phones-hero">
+    <div class="container">
+      <h1>Premium Mobile Phones</h1>
+      <p>Shop the latest iPhones with your preferred storage and color variants. Quality devices at competitive prices.</p>
+    </div>
+  </section>
+
+  <!-- Phones Grid Section -->
+  <section class="phones-section">
+    <div class="container">
+      <div class="phones-grid" id="phonesGrid">
+        <!-- Products will be rendered by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Modal -->
+  <div class="product-modal" id="productModal">
+    <div class="modal-overlay" onclick="closeProductModal()"></div>
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeProductModal()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </div>
+      <div class="modal-image">
+        <img src="" alt="Product Image" id="modalImage">
+      </div>
+      <div class="modal-body">
+        <h2 class="modal-title" id="modalTitle">Product Name</h2>
+        <div class="modal-price" id="modalPrice">GH₵ 0</div>
+        
+        <!-- Storage Selection -->
+        <div class="variant-section" id="storageSection">
+          <div class="variant-label">Select Storage</div>
+          <div class="storage-options" id="storageOptions">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+        
+        <!-- Color Selection -->
+        <div class="variant-section" id="colorSection">
+          <div class="variant-label">Select Color</div>
+          <div class="color-options" id="colorOptions">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+        
+        <!-- Quantity Selector -->
+        <div class="variant-section">
+          <div class="variant-label">Quantity</div>
+          <div class="quantity-selector">
+            <div class="qty-btn" onclick="changeModalQty(-1)">-</div>
+            <div class="qty-value" id="modalQty">1</div>
+            <div class="qty-btn" onclick="changeModalQty(1)">+</div>
+          </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="modal-actions">
+          <button class="add-to-cart-btn" onclick="addToCartFromModal()">
+            <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            Add to Cart
+          </button>
+          <button class="buy-now-btn" onclick="buyNowFromModal()">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Buy Now via WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay"></div>
+  <div class="cart-sidebar">
+    <div class="cart-header">
+      <h3>Shopping Cart</h3>
+      <div class="cart-close" onclick="closeCart()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </div>
+    </div>
+    <div class="cart-items">
+      <div class="cart-empty">
+        <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        <p>Your cart is empty</p>
+      </div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total:</span>
+        <strong>GH₵ 0</strong>
+      </div>
+      <button class="cart-whatsapp-btn" onclick="sendToWhatsApp()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Order via WhatsApp
+      </button>
+      <button class="cart-paystack-btn" onclick="initPaystack()">
+        Pay with Paystack
+      </button>
+    </div>
+  </div>
+
+  <!-- WhatsApp Float -->
+  <div class="whatsapp-float">
+    <a href="https://wa.me/0503390421" class="whatsapp-btn" title="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+    <a href="https://wa.me/0597705175" class="whatsapp-btn" title="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/main.js"></script>
+  
+  <script>
+    // ========================================
+    // Mobile Phones Product Data
+    // ========================================
+    const phoneProducts = [
+      {
+        id: 101,
+        name: 'iPhone 14 Pro',
+        image: 'assets/images/iphone14pro.jpg',
+        basePrice: 8500,
+        storageOptions: [
+          { label: '128GB', priceModifier: 0 },
+          { label: '256GB', priceModifier: 500 }
+        ],
+        colorOptions: ['Black', 'Silver', 'Gold']
+      },
+      {
+        id: 102,
+        name: 'iPhone 13 Pro',
+        image: 'assets/images/iphone13pro.jpg',
+        basePrice: 6500,
+        storageOptions: [
+          { label: '128GB', priceModifier: 0 },
+          { label: '256GB', priceModifier: 400 }
+        ],
+        colorOptions: ['Graphite', 'Silver', 'Blue']
+      },
+      {
+        id: 103,
+        name: 'iPhone X',
+        image: 'assets/images/iphonex.jpg',
+        basePrice: 3500,
+        storageOptions: [
+          { label: '64GB', priceModifier: 0 },
+          { label: '256GB', priceModifier: 300 }
+        ],
+        colorOptions: ['Black', 'White']
+      },
+      {
+        id: 104,
+        name: 'iPhone 11',
+        image: 'assets/images/iphone11.jpg',
+        basePrice: 2800,
+        storageOptions: [
+          { label: '64GB', priceModifier: 0 },
+          { label: '128GB', priceModifier: 250 }
+        ],
+        colorOptions: ['Black', 'Red', 'White']
+      },
+      {
+        id: 105,
+        name: 'iPhone 14 Plus',
+        image: 'assets/images/iphone14plus.jpg',
+        basePrice: 7800,
+        storageOptions: [
+          { label: '128GB', priceModifier: 0 },
+          { label: '256GB', priceModifier: 500 }
+        ],
+        colorOptions: ['Midnight', 'Blue', 'Purple']
+      },
+      {
+        id: 106,
+        name: 'Apple AirPods',
+        image: 'assets/images/appleairpods.jpg',
+        basePrice: 800,
+        storageOptions: [],
+        colorOptions: ['White']
+      }
+    ];
+
+    // Modal State
+    let currentProduct = null;
+    let selectedStorage = null;
+    let selectedColor = null;
+    let modalQty = 1;
+
+    // ========================================
+    // Render Products
+    // ========================================
+    function renderPhones() {
+      const grid = document.getElementById('phonesGrid');
+      if (!grid) return;
+
+      grid.innerHTML = phoneProducts.map(product => {
+        const priceDisplay = product.basePrice.toLocaleString('en-GH');
+        return `
+          <div class="phone-card" onclick="openProductModal(${product.id})">
+            <div class="phone-image">
+              <img src="${product.image}" alt="${product.name}" loading="lazy">
+              <span class="phone-badge">New</span>
+            </div>
+            <div class="phone-info">
+              <h3>${product.name}</h3>
+              <div class="phone-price">GH₵ ${priceDisplay}</div>
+              <button class="view-details-btn" onclick="event.stopPropagation(); openProductModal(${product.id})">
+                View Details
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ========================================
+    // Modal Functions
+    // ========================================
+    function openProductModal(productId) {
+      currentProduct = phoneProducts.find(p => p.id === productId);
+      if (!currentProduct) return;
+
+      // Reset selections
+      selectedStorage = currentProduct.storageOptions.length > 0 ? currentProduct.storageOptions[0] : null;
+      selectedColor = currentProduct.colorOptions.length > 0 ? currentProduct.colorOptions[0] : null;
+      modalQty = 1;
+
+      // Update modal content
+      document.getElementById('modalImage').src = currentProduct.image;
+      document.getElementById('modalTitle').textContent = currentProduct.name;
+      
+      // Render storage options
+      const storageSection = document.getElementById('storageSection');
+      const storageOptions = document.getElementById('storageOptions');
+      
+      if (currentProduct.storageOptions.length > 0) {
+        storageSection.style.display = 'block';
+        storageOptions.innerHTML = currentProduct.storageOptions.map((opt, index) => `
+          <button class="storage-btn ${index === 0 ? 'active' : ''}" onclick="selectStorage(${index})">
+            ${opt.label} ${opt.priceModifier > 0 ? `+GH₵${opt.priceModifier}` : ''}
+          </button>
+        `).join('');
+      } else {
+        storageSection.style.display = 'none';
+      }
+
+      // Render color options
+      const colorSection = document.getElementById('colorSection');
+      const colorOptions = document.getElementById('colorOptions');
+      
+      if (currentProduct.colorOptions.length > 0) {
+        colorSection.style.display = 'block';
+        colorOptions.innerHTML = currentProduct.colorOptions.map((color, index) => {
+          const colorClass = color.toLowerCase();
+          return `
+            <button class="color-btn ${colorClass} ${index === 0 ? 'active' : ''}" 
+                    data-color="${color}" 
+                    onclick="selectColor('${color}')"
+                    title="${color}">
+            </button>
+          `;
+        }).join('');
+      } else {
+        colorSection.style.display = 'none';
+      }
+
+      // Update price and quantity display
+      updateModalPrice();
+      document.getElementById('modalQty').textContent = modalQty;
+
+      // Show modal
+      const modal = document.getElementById('productModal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeProductModal() {
+      const modal = document.getElementById('productModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function selectStorage(index) {
+      selectedStorage = currentProduct.storageOptions[index];
+      
+      // Update UI
+      const buttons = document.querySelectorAll('.storage-btn');
+      buttons.forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+      
+      updateModalPrice();
+    }
+
+    function selectColor(color) {
+      selectedColor = color;
+      
+      // Update UI
+      const buttons = document.querySelectorAll('.color-btn');
+      buttons.forEach((btn) => {
+        const btnColor = btn.getAttribute('data-color');
+        btn.classList.toggle('active', btnColor === color);
+      });
+    }
+
+    function changeModalQty(change) {
+      modalQty += change;
+      if (modalQty < 1) modalQty = 1;
+      document.getElementById('modalQty').textContent = modalQty;
+      updateModalPrice();
+    }
+
+    function updateModalPrice() {
+      let price = currentProduct.basePrice;
+      if (selectedStorage) {
+        price += selectedStorage.priceModifier;
+      }
+      const finalPrice = price * modalQty;
+      
+      const priceEl = document.getElementById('modalPrice');
+      priceEl.innerHTML = `GH₵ ${finalPrice.toLocaleString('en-GH')}`;
+    }
+
+    function calculateFinalPrice() {
+      let price = currentProduct.basePrice;
+      if (selectedStorage) {
+        price += selectedStorage.priceModifier;
+      }
+      return price * modalQty;
+    }
+
+    // ========================================
+    // Cart Integration
+    // ========================================
+    function addToCartFromModal() {
+      if (!currentProduct) return;
+
+      const cartItem = {
+        id: currentProduct.id,
+        name: currentProduct.name,
+        image: currentProduct.image,
+        price: calculateFinalPrice(),
+        qty: modalQty,
+        storage: selectedStorage ? selectedStorage.label : 'N/A',
+        color: selectedColor || 'N/A',
+        variant: `${selectedStorage ? selectedStorage.label : ''} ${selectedColor || ''}`.trim()
+      };
+
+      // Check if item with same variant exists
+      const existingIndex = cart.findIndex(item => 
+        item.id === cartItem.id && 
+        item.storage === cartItem.storage && 
+        item.color === cartItem.color
+      );
+
+      if (existingIndex >= 0) {
+        cart[existingIndex].qty += modalQty;
+      } else {
+        cart.push(cartItem);
+      }
+
+      saveCart();
+      closeProductModal();
+      openCart();
+    }
+
+    function buyNowFromModal() {
+      if (!currentProduct) return;
+
+      const finalPrice = calculateFinalPrice();
+      const storageText = selectedStorage ? selectedStorage.label : 'N/A';
+      const colorText = selectedColor || 'N/A';
+
+      const message = `*📱 New Order - Rich Tym Luxe*\n\n` +
+        `*Product:* ${currentProduct.name}\n` +
+        `*Storage:* ${storageText}\n` +
+        `*Color:* ${colorText}\n` +
+        `*Quantity:* ${modalQty}\n` +
+        `*Total Price:* GH₵ ${finalPrice.toLocaleString('en-GH')}\n\n` +
+        `--- Customer Details ---\n` +
+        `Name: \n` +
+        `Address: \n` +
+        `Phone: `;
+
+      const encodedMessage = encodeURIComponent(message);
+      
+      // Use first available WhatsApp number
+      const phoneNumber = '0597705175';
+      window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    }
+
+    // ========================================
+    // Initialize
+    // ========================================
+    document.addEventListener('DOMContentLoaded', function() {
+      renderPhones();
+      
+      // ESC key to close modal
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeProductModal();
+        }
+      });
+    });
+
+    // Make functions globally available
+    window.openProductModal = openProductModal;
+    window.closeProductModal = closeProductModal;
+    window.selectStorage = selectStorage;
+    window.selectColor = selectColor;
+    window.changeModalQty = changeModalQty;
+    window.addToCartFromModal = addToCartFromModal;
+    window.buyNowFromModal = buyNowFromModal;
+  </script>
+</body>
+</html>
