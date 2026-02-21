@@ -3,10 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
+const bcrypt = require('bcryptjs');
 const connectDB = require('./config/db');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 const productRoutes = require('./routes/productRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const Admin = require('./models/Admin');
 
 const app = express();
 
@@ -53,6 +55,40 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // API Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
+
+// Seed admin route (for initial setup - should be disabled in production)
+app.post('/api/seed-admin', async (req, res) => {
+  try {
+    const { username, password, email } = req.body;
+    
+    const existingAdmin = await Admin.findOne({ username: username || 'AdminRichtymluxe' });
+    
+    if (existingAdmin) {
+      return res.json({ success: true, message: 'Admin user already exists' });
+    }
+    
+    const admin = new Admin({
+      username: username || 'AdminRichtymluxe',
+      email: email || 'admin@richtymluxe.com',
+      password: password || '2gABCD2026@#off',
+      fullName: 'Richtymluxe Administrator',
+      role: 'superadmin'
+    });
+    
+    await admin.save();
+    
+    res.json({ 
+      success: true, 
+      message: 'Admin user created successfully',
+      credentials: {
+        username: admin.username,
+        password: req.body.password || '2gABCD2026@#off'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // Image upload endpoint
 app.post('/api/upload', upload.single('image'), (req, res) => {
