@@ -87,6 +87,11 @@ function setupEventListeners() {
     // Add product
     addProductBtn.addEventListener('click', () => openProductModal());
     
+    // Product type change - update categories
+    document.getElementById('productType').addEventListener('change', function() {
+        updateCategoryOptions(this.value);
+    });
+    
     // Modal controls
     closeModal.addEventListener('click', closeProductModal);
     cancelBtn.addEventListener('click', closeProductModal);
@@ -341,12 +346,16 @@ function openProductModal(product = null) {
     additionalImages = [];
     additionalImagesPreview.innerHTML = '';
     
+    // Initialize category options based on default product type
+    updateCategoryOptions('boutique');
+    
     if (product) {
         // Fill form with product data
         document.getElementById('productName').value = product.productName;
         document.getElementById('shortDescription').value = product.shortDescription;
         document.getElementById('longDescription').value = product.longDescription || '';
         document.getElementById('productType').value = product.productType;
+        updateCategoryOptions(product.productType); // Update categories based on type
         document.getElementById('originalPrice').value = product.originalPrice || '';
         document.getElementById('salesPrice').value = product.salesPrice || '';
         document.getElementById('stockQuantity').value = product.stockQuantity || 0;
@@ -377,6 +386,64 @@ function openProductModal(product = null) {
 function closeProductModal() {
     productModal.classList.remove('active');
     editingProductId = null;
+}
+
+// Update category options based on product type
+function updateCategoryOptions(productType) {
+    const categorySelect = document.getElementById('category');
+    
+    // Clear existing options
+    categorySelect.innerHTML = '<option value="">Select Category</option>';
+    
+    let categories = [];
+    
+    if (productType === 'mobile') {
+        // Mobile Phone categories
+        categories = [
+            'Smartphones',
+            'Feature Phones',
+            'Tablets',
+            'Laptops',
+            'Smartwatches',
+            'Fitness Trackers',
+            'Phone Cases',
+            'Phone Chargers',
+            'Power Banks',
+            'Screen Protectors',
+            'Earphones & Headphones',
+            'Phone Mounts',
+            'USB Cables',
+            'Memory Cards',
+            'Bluetooth Speakers'
+        ];
+    } else {
+        // Boutique categories (default)
+        categories = [
+            'Dresses',
+            'Tops',
+            'Skirts',
+            'Pants',
+            'Jackets',
+            'Shoes',
+            'Bags',
+            'Accessories',
+            'Jewelry',
+            'Watches',
+            'Sunglasses',
+            'Handbags',
+            'Clutches',
+            'Belts',
+            'Scarves'
+        ];
+    }
+    
+    // Add categories to select
+    categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        categorySelect.appendChild(option);
+    });
 }
 
 // Edit product

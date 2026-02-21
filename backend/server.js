@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const connectDB = require('./config/db');
@@ -11,6 +12,12 @@ const adminRoutes = require('./routes/adminRoutes');
 const Admin = require('./models/Admin');
 
 const app = express();
+
+// Create uploads folder if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Connect to MongoDB
 connectDB();
