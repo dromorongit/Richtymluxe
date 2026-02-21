@@ -10,6 +10,7 @@ let totalPages = 1;
 let editingProductId = null;
 let deleteProductId = null;
 let additionalImages = [];
+let currentProductType = ''; // Store current filter
 
 // DOM Elements
 const loginScreen = document.getElementById('loginScreen');
@@ -208,13 +209,17 @@ function showDashboard() {
 }
 
 // Load products
-async function loadProducts(page = 1, search = '') {
+async function loadProducts(page = 1, search = '', productType = '') {
     const token = localStorage.getItem('adminToken');
     if (!token) return;
+    
+    // Store current filter
+    currentProductType = productType;
     
     try {
         let url = `${API_BASE}/products/admin/all?page=${page}&limit=10`;
         if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (productType) url += `&productType=${encodeURIComponent(productType)}`;
         
         const response = await fetch(url, {
             headers: {
@@ -333,7 +338,7 @@ function renderPagination() {
     const prevBtn = document.createElement('button');
     prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
     prevBtn.disabled = currentPage === 1;
-    prevBtn.onclick = () => loadProducts(currentPage - 1, searchInput.value);
+    prevBtn.onclick = () => loadProducts(currentPage - 1, searchInput.value, currentProductType);
     pagination.appendChild(prevBtn);
     
     // Page numbers
@@ -341,7 +346,7 @@ function renderPagination() {
         const btn = document.createElement('button');
         btn.textContent = i;
         btn.className = i === currentPage ? 'active' : '';
-        btn.onclick = () => loadProducts(i, searchInput.value);
+        btn.onclick = () => loadProducts(i, searchInput.value, currentProductType);
         pagination.appendChild(btn);
     }
     
@@ -349,14 +354,14 @@ function renderPagination() {
     const nextBtn = document.createElement('button');
     nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
     nextBtn.disabled = currentPage === totalPages;
-    nextBtn.onclick = () => loadProducts(currentPage + 1, searchInput.value);
+    nextBtn.onclick = () => loadProducts(currentPage + 1, searchInput.value, currentProductType);
     pagination.appendChild(nextBtn);
 }
 
 // Search handler
 function handleSearch(e) {
     const search = e.target.value;
-    loadProducts(1, search);
+    loadProducts(1, search, currentProductType);
 }
 
 // Open product modal
@@ -509,7 +514,7 @@ async function handleDelete() {
         if (response.ok) {
             showToast('Product deleted successfully', 'success');
             closeDeleteModal();
-            loadProducts(currentPage, searchInput.value);
+            loadProducts(currentPage, searchInput.value, currentProductType);
         } else {
             const data = await response.json();
             showToast(data.message || 'Failed to delete product', 'error');
@@ -560,7 +565,7 @@ async function handleProductSubmit(e) {
         if (response.ok) {
             showToast(editingProductId ? 'Product updated successfully' : 'Product created successfully', 'success');
             closeProductModal();
-            loadProducts(currentPage, searchInput.value);
+            loadProducts(currentPage, searchInput.value, currentProductType);
         } else {
             showToast(data.message || 'Failed to save product', 'error');
         }
@@ -664,19 +669,19 @@ function handleNavigation(view) {
         if (sidebarOverlay) sidebarOverlay.classList.remove('active');
     }
     
-    // Update page title
+    // Update page title and load products based on view
     switch(view) {
         case 'products':
             pageTitle.textContent = 'All Products';
-            loadProducts();
+            loadProducts(1, '', ''); // Load all products
             break;
         case 'boutique':
             pageTitle.textContent = 'Boutique Products';
-            loadProducts(1, '');
+            loadProducts(1, '', 'boutique'); // Filter by boutique
             break;
         case 'mobile':
             pageTitle.textContent = 'Mobile Phones';
-            loadProducts(1, '');
+            loadProducts(1, '', 'mobile'); // Filter by mobile
             break;
         case 'settings':
             pageTitle.textContent = 'Settings';
