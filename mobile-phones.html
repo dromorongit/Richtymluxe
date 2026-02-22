@@ -684,9 +684,14 @@
           <div class="phone-info">
             <h3>${product.productName}</h3>
             <div class="phone-price">${priceDisplay}</div>
-            <button class="view-details-btn" onclick="event.stopPropagation(); openProductModal('${product._id}')">
-              View Details
-            </button>
+            <div style="display: flex; gap: 8px;">
+              <button class="view-details-btn" onclick="event.stopPropagation(); openProductModal('${product._id}')" style="flex: 1;">
+                View Details
+              </button>
+              <button class="view-details-btn" onclick="event.stopPropagation(); addToCartAndWhatsApp('${product._id}')" style="flex: 1; background: #25d366;">
+                Add to Cart
+              </button>
+            </div>
           </div>
         </div>
       `;
@@ -747,14 +752,206 @@
       initCart();
     });
     
+    // Add to cart and send to WhatsApp directly
+    window.addToCartAndWhatsApp = function(productId) {
+      const product = products.find(p => p._id === productId);
+      if (!product) return;
+      
+      const price = product.salesPrice || product.originalPrice || 0;
+      const phoneNumber = '0597705175';
+      
+      let message = `*🛒 New Order from Rich Tym Luxe*\n\n`;
+      message += `• ${product.productName} x1 = GH₵ ${price}\n`;
+      message += `\n*Total: GH₵ ${price}*\n\n`;
+      message += `--- Customer Details ---\n`;
+      message += `Name: \n`;
+      message += `Address: \n`;
+      message += `Phone: `;
+      
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    };
+    
     // Make function globally available
     window.openProductModal = function(productId) {
       const product = products.find(p => p._id === productId);
       if (!product) return;
       
-      // Simple alert for now - can be enhanced later
-      alert(`Product: ${product.productName}\nPrice: GH₵ ${product.salesPrice || product.originalPrice}\n\nContact us to order!`);
+      // Populate modal
+      document.getElementById('modalImage').src = product.coverImage || 'assets/images/placeholder.jpg';
+      document.getElementById('modalTitle').textContent = product.productName;
+      
+      const price = product.salesPrice || product.originalPrice || 0;
+      document.getElementById('modalPrice').textContent = `GH₵ ${price}`;
+      
+      // Show modal
+      document.getElementById('productModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Store current product for add to cart
+      window.currentModalProduct = product;
     };
+    
+    window.closeProductModal = function() {
+      document.getElementById('productModal').classList.remove('active');
+      document.body.style.overflow = '';
+    };
+    
+    // Add to cart from modal
+    window.addToCartFromModal = function() {
+      const product = window.currentModalProduct;
+      if (!product) return;
+      
+      const price = product.salesPrice || product.originalPrice || 0;
+      const cartProduct = {
+        id: product._id,
+        name: product.productName,
+        price: price,
+        image: product.coverImage || ''
+      };
+      
+      const existingItem = cart.find(item => item.id === product._id);
+      if (existingItem) {
+        existingItem.qty++;
+      } else {
+        cart.push({ ...cartProduct, qty: 1 });
+      }
+      
+      saveCart();
+      updateCartCount();
+      renderCartItems();
+      alert('Added to cart!');
+    };
+    
+    // Buy now from modal - send to WhatsApp
+    window.buyNowFromModal = function() {
+      const product = window.currentModalProduct;
+      if (!product) return;
+      
+      const price = product.salesPrice || product.originalPrice || 0;
+      const phoneNumber = '0597705175';
+      
+      let message = `*🛒 New Order from Rich Tym Luxe*\n\n`;
+      message += `• ${product.productName} x1 = GH₵ ${price}\n`;
+      message += `\n*Total: GH₵ ${price}*\n\n`;
+      message += `--- Customer Details ---\n`;
+      message += `Name: \n`;
+      message += `Address: \n`;
+      message += `Phone: `;
+      
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    };
+    
+    // Change quantity in modal
+    window.changeModalQty = function(change) {
+      const qtyEl = document.getElementById('modalQty');
+      let qty = parseInt(qtyEl.textContent) + change;
+      if (qty < 1) qty = 1;
+      qtyEl.textContent = qty;
+    };
+    
+    // Save cart to localStorage
+    function saveCart() {
+      try {
+        localStorage.setItem('richtymluxe_cart', JSON.stringify(cart));
+      } catch (e) {
+        console.log('Cart save error:', e);
+      }
+    }
+    
+    // Update cart count
+    function updateCartCount() {
+      const cartCount = document.querySelector('.cart-count');
+      if (cartCount) {
+        const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+        cartCount.textContent = totalItems;
+        cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+      }
+    }
+    
+    // Render cart items
+    function renderCartItems() {
+      const cartItemsContainer = document.querySelector('.cart-items');
+      if (!cartItemsContainer) return;
+
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = `
+          <div class="cart-empty">
+            <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <p>Your cart is empty</p>
+          </div>
+        `;
+        return;
+      }
+
+      cartItemsContainer.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div class="cart-item-image">
+            <img src="${item.image}" alt="${item.name}" loading="lazy">
+          </div>
+          <div class="cart-item-details">
+            <h4>${item.name}</h4>
+            <p>GH₵ ${item.price}</p>
+            <div class="cart-item-qty">
+              <span class="qty-btn" onclick="updateQty(${item.id}, -1)">-</span>
+              <span>${item.qty}</span>
+              <span class="qty-btn" onclick="updateQty(${item.id}, 1)">+</span>
+            </div>
+            <span class="cart-item-remove" onclick="removeFromCart(${item.id})">Remove</span>
+          </div>
+        </div>
+      `).join('');
+
+      const cartTotal = document.querySelector('.cart-total strong');
+      if (cartTotal) {
+        const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        cartTotal.textContent = `GH₵ ${total}`;
+      }
+    }
+    
+    // Get cart total
+    function getCartTotal() {
+      return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    }
+    
+    // Remove from cart
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      saveCart();
+      updateCartCount();
+      renderCartItems();
+    }
+    
+    // Update quantity
+    function updateQty(productId, change) {
+      const item = cart.find(item => item.id === productId);
+      if (item) {
+        item.qty += change;
+        if (item.qty <= 0) {
+          removeFromCart(productId);
+        } else {
+          saveCart();
+          updateCartCount();
+          renderCartItems();
+        }
+      }
+    }
+    
+    // Open cart sidebar
+    function openCart() {
+      const cartSidebar = document.querySelector('.cart-sidebar');
+      const cartOverlay = document.querySelector('.cart-overlay');
+      if (cartSidebar) cartSidebar.classList.add('active');
+      if (cartOverlay) cartOverlay.classList.add('active');
+    }
+    
+    function closeCart() {
+      const cartSidebar = document.querySelector('.cart-sidebar');
+      const cartOverlay = document.querySelector('.cart-overlay');
+      if (cartSidebar) cartSidebar.classList.remove('active');
+      if (cartOverlay) cartOverlay.classList.remove('active');
+    }
   </script>
 </body>
 </html>
