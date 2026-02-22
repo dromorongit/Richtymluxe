@@ -49,13 +49,23 @@ function initCart() {
 // Product Fetching from API
 // ========================================
 async function fetchProducts(type = 'boutique') {
+  console.log('fetchProducts called with type:', type);
   try {
-    // Add timestamp to prevent caching issues (304 Not Modified)
+    // Add timestamp to prevent caching issues
     const cacheBust = Date.now();
-    const response = await fetch(`${API_BASE}/products/${type}?t=${cacheBust}`);
+    const url = `${API_BASE}/products/${type}?t=${cacheBust}`;
+    console.log('Fetching URL:', url);
+    
+    const response = await fetch(url);
+    console.log('Response status:', response.status);
+    
     if (response.ok || response.status === 304) {
-      return await response.json();
+      const data = await response.json();
+      console.log('Products received:', data.length, data);
+      return data;
     }
+    
+    console.log('Returning empty array - response not OK');
     return [];
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -120,12 +130,17 @@ function addProductToCart(productId) {
 }
 
 async function loadProductsToPage(productType) {
+  console.log('loadProductsToPage called with:', productType);
   const container = document.getElementById('product-container');
-  if (!container) return;
+  if (!container) {
+    console.log('product-container not found!');
+    return;
+  }
 
   container.innerHTML = '<div class="loading">Loading products...</div>';
 
   products = await fetchProducts(productType);
+  console.log('loadProductsToPage - products length:', products.length);
 
   if (products.length === 0) {
     container.innerHTML = '<div class="no-products">No products available. Check back soon!</div>';
@@ -133,6 +148,7 @@ async function loadProductsToPage(productType) {
   }
 
   container.innerHTML = products.map(product => renderProductCard(product)).join('');
+  console.log('Products rendered to DOM');
 }
 
 // Save cart
