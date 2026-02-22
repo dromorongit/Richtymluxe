@@ -9,6 +9,22 @@
 const API_BASE = 'https://richtymluxe-production.up.railway.app/api';
 
 // ========================================
+// DOM Elements
+// ========================================
+const header = document.querySelector('.header');
+const cartBtn = document.querySelector('.cart-btn');
+const cartSidebar = document.querySelector('.cart-sidebar');
+const cartOverlay = document.querySelector('.cart-overlay');
+const cartClose = document.querySelector('.cart-close');
+const lightbox = document.querySelector('.lightbox');
+const lightboxImg = document.querySelector('.lightbox-img');
+const lightboxClose = document.querySelector('.lightbox-close');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const galleryItems = document.querySelectorAll('.gallery-item');
+const navToggle = document.querySelector('.nav-toggle');
+const navMenu = document.querySelector('.nav-menu');
+
+// ========================================
 // Cart System
 // ========================================
 let cart = [];
@@ -443,10 +459,12 @@ function submitContact(event) {
 // Scroll Effects
 // ========================================
 function handleScroll() {
-  if (window.scrollY > 50) {
-    header.classList.add('scrolled');
-  } else {
-    header.classList.remove('scrolled');
+  if (header) {
+    if (window.scrollY > 50) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
   }
 }
 
