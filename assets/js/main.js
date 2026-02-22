@@ -237,7 +237,7 @@ function sendToWhatsApp() {
     return;
   }
 
-  const phoneNumber = '0597705175';
+  const phoneNumber = '233503390421';
   let message = `*🛒 New Order from Rich Tym Luxe*\n\n`;
   
   cart.forEach(item => {
@@ -378,7 +378,7 @@ function submitBooking(event) {
   if (notes) message += `*Notes:* ${notes}`;
 
   const encodedMessage = encodeURIComponent(message);
-  const whatsappUrl = `https://wa.me/0597705175?text=${encodedMessage}`;
+  const whatsappUrl = `https://wa.me/233597705175?text=${encodedMessage}`;
   
   window.open(whatsappUrl, '_blank');
   
@@ -426,7 +426,7 @@ function submitContact(event) {
   whatsappMessage += `*Message:* ${message}`;
 
   const encodedMessage = encodeURIComponent(whatsappMessage);
-  const whatsappUrl = `https://wa.me/0597705175?text=${encodedMessage}`;
+  const whatsappUrl = `https://wa.me/233597705175?text=${encodedMessage}`;
   
   window.open(whatsappUrl, '_blank');
   
