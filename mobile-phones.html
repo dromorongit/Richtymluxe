@@ -487,6 +487,43 @@
         border-radius: 24px 24px 0 0;
       }
     }
+    
+    /* Cart Customer Form */
+    .cart-customer-form {
+      padding: 16px;
+      border-bottom: 1px solid #f5f5f5;
+      background: #f5f5f5;
+    }
+    
+    .cart-customer-form .form-group {
+      margin-bottom: 10px;
+    }
+    
+    .cart-customer-form .form-group:last-child {
+      margin-bottom: 0;
+    }
+    
+    .cart-customer-form input,
+    .cart-customer-form textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #ffb6c1;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: all 0.3s;
+      background: #fff;
+    }
+    
+    .cart-customer-form input:focus,
+    .cart-customer-form textarea:focus {
+      border-color: #ff69b4;
+      outline: none;
+    }
+    
+    .cart-customer-form textarea {
+      resize: none;
+    }
   </style>
 </head>
 <body>
@@ -604,6 +641,20 @@
         <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       </div>
     </div>
+    
+    <!-- Customer Details Form -->
+    <div class="cart-customer-form" id="cart-customer-form">
+      <div class="form-group">
+        <input type="text" id="customer-name" placeholder="Your Name" required>
+      </div>
+      <div class="form-group">
+        <input type="tel" id="customer-phone" placeholder="Phone Number" required>
+      </div>
+      <div class="form-group">
+        <textarea id="customer-address" placeholder="Delivery Address" rows="2" required></textarea>
+      </div>
+    </div>
+    
     <div class="cart-items">
       <div class="cart-empty">
         <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
@@ -676,7 +727,7 @@
       const imageUrl = product.coverImage || 'assets/images/placeholder.jpg';
 
       return `
-        <div class="phone-card" onclick="openProductModal('${product._id}')">
+        <div class="phone-card">
           <div class="phone-image">
             <img src="${imageUrl}" alt="${product.productName}" loading="lazy">
             ${badges}
@@ -684,14 +735,9 @@
           <div class="phone-info">
             <h3>${product.productName}</h3>
             <div class="phone-price">${priceDisplay}</div>
-            <div style="display: flex; gap: 8px;">
-              <button class="view-details-btn" onclick="event.stopPropagation(); openProductModal('${product._id}')" style="flex: 1;">
-                View Details
-              </button>
-              <button class="view-details-btn" onclick="event.stopPropagation(); addToCartAndWhatsApp('${product._id}')" style="flex: 1; background: #25d366;">
-                Add to Cart
-              </button>
-            </div>
+            <button class="view-details-btn" onclick="addPhoneToCart('${product._id}')">
+              Add to Cart
+            </button>
           </div>
         </div>
       `;
@@ -751,6 +797,115 @@
       loadMobileProductsToPage('mobile');
       initCart();
     });
+    
+    // Add phone to cart - adds to cart and opens cart sidebar
+    window.addPhoneToCart = function(productId) {
+      const product = products.find(p => p._id === productId);
+      if (!product) return;
+      
+      const price = product.salesPrice || product.originalPrice || 0;
+      const cartProduct = {
+        id: product._id,
+        name: product.productName,
+        price: price,
+        image: product.coverImage || ''
+      };
+      
+      const existingItem = cart.find(item => item.id === productId);
+      if (existingItem) {
+        existingItem.qty++;
+      } else {
+        cart.push({ ...cartProduct, qty: 1 });
+      }
+      
+      saveCart();
+      updateCartCount();
+      renderCartItems();
+      openCart();
+    };
+    
+    // Send to WhatsApp with customer details
+    window.sendToWhatsApp = function() {
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+
+      // Get customer details
+      const customerName = document.getElementById('customer-name')?.value.trim();
+      const customerPhone = document.getElementById('customer-phone')?.value.trim();
+      const customerAddress = document.getElementById('customer-address')?.value.trim();
+
+      // Validate customer details
+      if (!customerName || !customerPhone || !customerAddress) {
+        alert('Please fill in your name, phone number, and delivery address!');
+        return;
+      }
+
+      const phoneNumber = '233503390421';
+      let message = `*🛒 New Order from Rich Tym Luxe*\n\n`;
+      
+      message += `*Customer Details:*\n`;
+      message += `Name: ${customerName}\n`;
+      message += `Phone: ${customerPhone}\n`;
+      message += `Address: ${customerAddress}\n\n`;
+      
+      message += `*Order Items:*\n`;
+      
+      cart.forEach(item => {
+        message += `• ${item.name} x${item.qty} = GH₵ ${item.price * item.qty}\n`;
+      });
+      
+      message += `\n*Total: GH₵ ${getCartTotal()}*\n\n`;
+      
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    };
+    
+    // Save cart to localStorage with customer details
+    function saveCart() {
+      try {
+        localStorage.setItem('richtymluxe_cart', JSON.stringify(cart));
+        
+        // Save customer details
+        const customerDetails = {
+          name: document.getElementById('customer-name')?.value || '',
+          phone: document.getElementById('customer-phone')?.value || '',
+          address: document.getElementById('customer-address')?.value || ''
+        };
+        localStorage.setItem('richtymluxe_customer', JSON.stringify(customerDetails));
+      } catch (e) {
+        console.log('Cart save error:', e);
+      }
+    }
+    
+    // Load cart and customer from localStorage
+    function initCart() {
+      try {
+        const savedCart = localStorage.getItem('richtymluxe_cart');
+        if (savedCart) {
+          cart = JSON.parse(savedCart);
+          updateCartCount();
+          renderCartItems();
+        }
+        
+        // Load saved customer details
+        const savedCustomer = localStorage.getItem('richtymluxe_customer');
+        if (savedCustomer) {
+          const customer = JSON.parse(savedCustomer);
+          const nameInput = document.getElementById('customer-name');
+          const phoneInput = document.getElementById('customer-phone');
+          const addressInput = document.getElementById('customer-address');
+          
+          if (nameInput) nameInput.value = customer.name || '';
+          if (phoneInput) phoneInput.value = customer.phone || '';
+          if (addressInput) addressInput.value = customer.address || '';
+        }
+      } catch (e) {
+        console.log('Cart initialization error:', e);
+        cart = [];
+      }
+    }
     
     // Add to cart and send to WhatsApp directly
     window.addToCartAndWhatsApp = function(productId) {
