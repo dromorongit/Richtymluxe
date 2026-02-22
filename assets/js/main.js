@@ -50,8 +50,10 @@ function initCart() {
 // ========================================
 async function fetchProducts(type = 'boutique') {
   try {
-    const response = await fetch(`${API_BASE}/products/${type}`);
-    if (response.ok) {
+    // Add timestamp to prevent caching issues (304 Not Modified)
+    const cacheBust = Date.now();
+    const response = await fetch(`${API_BASE}/products/${type}?t=${cacheBust}`);
+    if (response.ok || response.status === 304) {
       return await response.json();
     }
     return [];
