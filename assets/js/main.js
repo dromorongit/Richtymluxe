@@ -39,6 +39,19 @@ function initCart() {
       updateCartCount();
       renderCartItems();
     }
+    
+    // Load saved customer details
+    const savedCustomer = localStorage.getItem('richtymluxe_customer');
+    if (savedCustomer) {
+      const customer = JSON.parse(savedCustomer);
+      const nameInput = document.getElementById('customer-name');
+      const phoneInput = document.getElementById('customer-phone');
+      const addressInput = document.getElementById('customer-address');
+      
+      if (nameInput) nameInput.value = customer.name || '';
+      if (phoneInput) phoneInput.value = customer.phone || '';
+      if (addressInput) addressInput.value = customer.address || '';
+    }
   } catch (e) {
     console.log('Cart initialization error:', e);
     cart = [];
@@ -171,6 +184,15 @@ async function loadProductsToPage(productType) {
 function saveCart() {
   try {
     localStorage.setItem('richtymluxe_cart', JSON.stringify(cart));
+    
+    // Save customer details
+    const customerDetails = {
+      name: document.getElementById('customer-name')?.value || '',
+      phone: document.getElementById('customer-phone')?.value || '',
+      address: document.getElementById('customer-address')?.value || ''
+    };
+    localStorage.setItem('richtymluxe_customer', JSON.stringify(customerDetails));
+    
     updateCartCount();
     renderCartItems();
   } catch (e) {
@@ -287,18 +309,32 @@ function sendToWhatsApp() {
     return;
   }
 
+  // Get customer details
+  const customerName = document.getElementById('customer-name')?.value.trim();
+  const customerPhone = document.getElementById('customer-phone')?.value.trim();
+  const customerAddress = document.getElementById('customer-address')?.value.trim();
+
+  // Validate customer details
+  if (!customerName || !customerPhone || !customerAddress) {
+    alert('Please fill in your name, phone number, and delivery address!');
+    return;
+  }
+
   const phoneNumber = '233503390421';
   let message = `*🛒 New Order from Rich Tym Luxe*\n\n`;
+  
+  message += `*Customer Details:*\n`;
+  message += `Name: ${customerName}\n`;
+  message += `Phone: ${customerPhone}\n`;
+  message += `Address: ${customerAddress}\n\n`;
+  
+  message += `*Order Items:*\n`;
   
   cart.forEach(item => {
     message += `• ${item.name} x${item.qty} = GH₵ ${item.price * item.qty}\n`;
   });
   
   message += `\n*Total: GH₵ ${getCartTotal()}*\n\n`;
-  message += `--- Customer Details ---\n`;
-  message += `Name: \n`;
-  message += `Address: \n`;
-  message += `Phone: `;
   
   const encodedMessage = encodeURIComponent(message);
   window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
