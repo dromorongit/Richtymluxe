@@ -98,8 +98,10 @@ function setupEventListeners() {
     // Mobile sidebar toggle
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
-            sidebar.classList.add('active');
-            if (sidebarOverlay) sidebarOverlay.classList.add('active');
+            sidebar.classList.toggle('active');
+            if (sidebarOverlay) {
+                sidebarOverlay.classList.toggle('active');
+            }
         });
     }
     
@@ -140,9 +142,6 @@ function setupEventListeners() {
     coverImageInput.addEventListener('change', handleCoverImageUpload);
     addAdditionalImageBtn.addEventListener('click', () => additionalImagesInput.click());
     additionalImagesInput.addEventListener('change', handleAdditionalImagesUpload);
-    
-    // Mobile menu
-    menuToggle.addEventListener('click', () => sidebar.classList.toggle('active'));
     
     // Navigation
     navItems.forEach(item => {
