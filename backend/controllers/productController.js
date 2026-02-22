@@ -108,7 +108,8 @@ const createProduct = async (req, res) => {
       additionalImages,
       isNew,
       isBestseller,
-      productType
+      productType,
+      colors
     } = req.body;
 
     // Check for duplicate product name
@@ -127,6 +128,7 @@ const createProduct = async (req, res) => {
       category,
       coverImage,
       additionalImages: additionalImages || [],
+      colors: colors || [],
       isNew: isNew || false,
       isBestseller: isBestseller || false,
       productType
@@ -157,7 +159,8 @@ const updateProduct = async (req, res) => {
       isNew,
       isBestseller,
       productType,
-      isActive
+      isActive,
+      colors
     } = req.body;
 
     const product = await Product.findById(req.params.id);
@@ -183,6 +186,7 @@ const updateProduct = async (req, res) => {
     product.category = category || product.category;
     product.coverImage = coverImage || product.coverImage;
     product.additionalImages = additionalImages || product.additionalImages;
+    product.colors = colors || product.colors;
     product.isNew = isNew !== undefined ? isNew : product.isNew;
     product.isBestseller = isBestseller !== undefined ? isBestseller : product.isBestseller;
     product.productType = productType || product.productType;

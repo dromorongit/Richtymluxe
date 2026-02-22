@@ -41,6 +41,10 @@ const productSchema = new mongoose.Schema({
   additionalImages: [{
     type: String
   }],
+  colors: [{
+    type: String,
+    trim: true
+  }],
   isNew: {
     type: Boolean,
     default: false

@@ -375,6 +375,7 @@ function openProductModal(product = null) {
     coverImagePath.value = '';
     additionalImages = [];
     additionalImagesPreview.innerHTML = '';
+    document.getElementById('colors').value = '';
     
     // Initialize category options based on default product type
     updateCategoryOptions('boutique');
@@ -406,6 +407,11 @@ function openProductModal(product = null) {
             additionalImages.forEach((img, index) => {
                 addAdditionalImageToPreview(img, index);
             });
+        }
+        
+        // Colors
+        if (product.colors && product.colors.length > 0) {
+            document.getElementById('colors').value = product.colors.join(', ');
         }
     }
     
@@ -542,7 +548,8 @@ async function handleProductSubmit(e) {
         isNew: document.getElementById('isNew').checked,
         isBestseller: document.getElementById('isBestseller').checked,
         coverImage: coverImagePath.value,
-        additionalImages: additionalImages
+        additionalImages: additionalImages,
+        colors: document.getElementById('colors').value ? document.getElementById('colors').value.split(',').map(c => c.trim()).filter(c => c) : []
     };
     
     try {
@@ -578,6 +585,9 @@ async function handleCoverImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
     
+    // Show loading state
+    coverImagePreview.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Uploading...</span>';
+    
     const formData = new FormData();
     formData.append('image', file);
     
@@ -591,12 +601,17 @@ async function handleCoverImageUpload(e) {
         
         if (response.ok) {
             coverImagePath.value = data.filePath;
-            coverImagePreview.innerHTML = `<img src="${data.filePath}" alt="Cover">`;
+            // Use the returned filePath for preview - works for both local and Cloudinary URLs
+            const previewUrl = data.filePath.startsWith('http') ? data.filePath : data.filePath;
+            coverImagePreview.innerHTML = `<img src="${previewUrl}" alt="Cover" onerror="this.parentElement.innerHTML='<i class=\"fas fa-exclamation-triangle\"></i><span>Failed to load image</span>'">`;
             coverImagePreview.classList.add('has-image');
+            showToast('Image uploaded successfully', 'success');
         } else {
+            coverImagePreview.innerHTML = '<i class="fas fa-image"></i><span>Click to upload</span>';
             showToast(data.message || 'Failed to upload image', 'error');
         }
     } catch (error) {
+        coverImagePreview.innerHTML = '<i class="fas fa-image"></i><span>Click to upload</span>';
         showToast('Failed to upload image', 'error');
     }
 }
@@ -605,6 +620,15 @@ async function handleCoverImageUpload(e) {
 async function handleAdditionalImagesUpload(e) {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
+    
+    // Show loading in preview area
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'additional-image-item';
+    loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Uploading...</span>';
+    loadingDiv.style.display = 'flex';
+    loadingDiv.style.alignItems = 'center';
+    loadingDiv.style.justifyContent = 'center';
+    additionalImagesPreview.appendChild(loadingDiv);
     
     for (const file of files) {
         const formData = new FormData();
@@ -626,6 +650,9 @@ async function handleAdditionalImagesUpload(e) {
             showToast('Failed to upload image', 'error');
         }
     }
+    
+    // Remove loading indicator
+    loadingDiv.remove();
     
     e.target.value = '';
 }
