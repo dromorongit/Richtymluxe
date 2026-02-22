@@ -122,7 +122,7 @@ function renderProductCard(product) {
 }
 
 function addProductToCart(productId) {
-  const product = products.find(p => p._id === productId);
+  const product = products.find(p => String(p._id) === String(productId));
   if (product) {
     const price = product.salesPrice || product.originalPrice || 0;
     const cartProduct = {
@@ -131,7 +131,7 @@ function addProductToCart(productId) {
       price: price,
       image: product.coverImage || ''
     };
-    const existingItem = cart.find(item => item.id === productId);
+    const existingItem = cart.find(item => String(item.id) === String(productId));
     if (existingItem) {
       existingItem.qty++;
     } else {
@@ -212,9 +212,9 @@ function updateCartCount() {
 
 // Add to cart
 function addToCart(productId) {
-  const product = products.find(p => p.id === productId);
+  const product = products.find(p => String(p.id) === String(productId));
   if (product) {
-    const existingItem = cart.find(item => item.id === productId);
+    const existingItem = cart.find(item => String(item.id) === String(productId));
     if (existingItem) {
       existingItem.qty++;
     } else {
@@ -227,13 +227,13 @@ function addToCart(productId) {
 
 // Remove from cart
 function removeFromCart(productId) {
-  cart = cart.filter(item => item.id !== productId);
+  cart = cart.filter(item => String(item.id) !== String(productId));
   saveCart();
 }
 
 // Update quantity
 function updateQty(productId, change) {
-  const item = cart.find(item => item.id === productId);
+  const item = cart.find(item => String(item.id) === String(productId));
   if (item) {
     item.qty += change;
     if (item.qty <= 0) {
@@ -249,7 +249,7 @@ function getCartTotal() {
   return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 }
 
-// Render cart items
+// Render cart items with event delegation
 function renderCartItems() {
   const cartItemsContainer = document.querySelector('.cart-items');
   if (!cartItemsContainer) return;
@@ -265,7 +265,7 @@ function renderCartItems() {
   }
 
   cartItemsContainer.innerHTML = cart.map(item => `
-    <div class="cart-item">
+    <div class="cart-item" data-id="${item.id}">
       <div class="cart-item-image">
         <img src="${item.image}" alt="${item.name}" loading="lazy">
       </div>
@@ -273,14 +273,31 @@ function renderCartItems() {
         <h4>${item.name}</h4>
         <p>GH₵ ${item.price}</p>
         <div class="cart-item-qty">
-          <span class="qty-btn" onclick="updateQty(${item.id}, -1)">-</span>
+          <span class="qty-btn" data-action="decrease" data-id="${item.id}">-</span>
           <span>${item.qty}</span>
-          <span class="qty-btn" onclick="updateQty(${item.id}, 1)">+</span>
+          <span class="qty-btn" data-action="increase" data-id="${item.id}">+</span>
         </div>
-        <span class="cart-item-remove" onclick="removeFromCart(${item.id})">Remove</span>
+        <span class="cart-item-remove" data-action="remove" data-id="${item.id}">Remove</span>
       </div>
     </div>
   `).join('');
+
+  // Add event listeners using event delegation
+  cartItemsContainer.querySelectorAll('.qty-btn, .cart-item-remove').forEach(el => {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      const id = this.getAttribute('data-id');
+      const action = this.getAttribute('data-action');
+      
+      if (action === 'remove') {
+        removeFromCart(id);
+      } else if (action === 'increase') {
+        updateQty(id, 1);
+      } else if (action === 'decrease') {
+        updateQty(id, -1);
+      }
+    });
+  });
 
   const cartTotal = document.querySelector('.cart-total strong');
   if (cartTotal) {
