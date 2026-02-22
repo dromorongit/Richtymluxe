@@ -131,24 +131,40 @@ function addProductToCart(productId) {
 
 async function loadProductsToPage(productType) {
   console.log('loadProductsToPage called with:', productType);
-  const container = document.getElementById('product-container');
+  
+  // Try multiple ways to find the container
+  let container = document.getElementById('product-container');
+  
   if (!container) {
-    console.log('product-container not found!');
+    console.log('Container not found by ID, searching by class...');
+    container = document.querySelector('.shop-grid');
+  }
+  
+  if (!container) {
+    console.log('ERROR: No product container found in DOM!');
+    console.log('Looking for elements with product-container or shop-grid...');
+    console.log('All divs:', document.querySelectorAll('div'));
     return;
   }
 
-  container.innerHTML = '<div class="loading">Loading products...</div>';
+  console.log('Container found:', container);
+  container.innerHTML = '<div class="loading" style="padding:20px;text-align:center;">Loading products...</div>';
 
   products = await fetchProducts(productType);
   console.log('loadProductsToPage - products length:', products.length);
 
   if (products.length === 0) {
-    container.innerHTML = '<div class="no-products">No products available. Check back soon!</div>';
+    container.innerHTML = '<div class="no-products" style="padding:40px;text-align:center;">No products available. Check back soon!</div>';
     return;
   }
 
+  // Render products with inline styles for debugging
   container.innerHTML = products.map(product => renderProductCard(product)).join('');
-  console.log('Products rendered to DOM');
+  
+  // Force display
+  container.style.display = 'grid';
+  
+  console.log('Products rendered to DOM. Container HTML length:', container.innerHTML.length);
 }
 
 // Save cart
