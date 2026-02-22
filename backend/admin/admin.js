@@ -271,14 +271,14 @@ function renderProductsTable() {
         if (product.originalPrice && product.salesPrice) {
             priceHtml = `
                 <div class="price-info">
-                    <span class="original-price">$${product.originalPrice.toFixed(2)}</span>
-                    <span class="sales-price">$${product.salesPrice.toFixed(2)}</span>
+                    <span class="original-price">GH₵${product.originalPrice.toFixed(2)}</span>
+                    <span class="sales-price">GH₵${product.salesPrice.toFixed(2)}</span>
                 </div>
             `;
         } else if (product.salesPrice) {
-            priceHtml = `<span class="sales-price">$${product.salesPrice.toFixed(2)}</span>`;
+            priceHtml = `<span class="sales-price">GH₵${product.salesPrice.toFixed(2)}</span>`;
         } else if (product.originalPrice) {
-            priceHtml = `<span class="sales-price">$${product.originalPrice.toFixed(2)}</span>`;
+            priceHtml = `<span class="sales-price">GH₵${product.originalPrice.toFixed(2)}</span>`;
         } else {
             priceHtml = '<span class="sales-price">-</span>';
         }
