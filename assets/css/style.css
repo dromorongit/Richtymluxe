@@ -857,6 +857,14 @@ p { color: var(--gray); margin-bottom: 1rem; }
   margin-bottom: 0;
 }
 
+.footer-bottom .developer-credit {
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+
 /* WhatsApp Float */
 .whatsapp-float {
   position: fixed;
