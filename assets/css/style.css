@@ -1344,6 +1344,52 @@ p { color: var(--gray); margin-bottom: 1rem; }
 
 .cart-paystack-btn:active { transform: scale(0.98); }
 
+/* MTN Mobile Money Payment */
+.momo-payment {
+  background: #fff5f8;
+  border: 2px solid #ffcc00;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.momo-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.momo-details {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.momo-details strong {
+  color: #333;
+}
+
+.cart-momo-btn {
+  width: 100%;
+  padding: 14px;
+  background: #ffcc00;
+  color: #333;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-height: 50px;
+  font-size: 0.95rem;
+}
+
+.cart-momo-btn:active { transform: scale(0.98); }
+
+.cart-momo-btn:hover {
+  background: #e6b800;
+}
+
 /* Cart Customer Form */
 .cart-customer-form {
   padding: 16px;

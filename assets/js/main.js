@@ -367,6 +367,22 @@ function initPaystack() {
   alert('Paystack integration requires a valid public key. Please configure your Paystack keys in main.js');
 }
 
+// MTN Mobile Money Payment
+function confirmMTNPayment() {
+  const total = getCartTotal();
+  if (total === 0) {
+    alert('Your cart is empty!');
+    return;
+  }
+  
+  const message = `*💰 Payment Confirmation Request*\n\n`;
+  message += `I have made payment of GH₵ ${total} via MTN Mobile Money.\n\n`;
+  message += `Please confirm receipt and process my order.`;
+  
+  const encodedMessage = encodeURIComponent(message);
+  window.open(`https://wa.me/233597705175?text=${encodedMessage}`, '_blank');
+}
+
 // ========================================
 // Navigation
 // ========================================
@@ -734,3 +750,4 @@ window.closeNav = closeNav;
 window.addProductToCart = addProductToCart;
 window.loadProductsToPage = loadProductsToPage;
 window.fetchProducts = fetchProducts;
+window.confirmMTNPayment = confirmMTNPayment;
