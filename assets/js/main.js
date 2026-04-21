@@ -12,6 +12,7 @@ const API_BASE = 'https://richtymluxe-production.up.railway.app/api';
 // Paystack Configuration
 // ========================================
 const PAYSTACK_PUBLIC_KEY = 'pk_live_01327cc818f9eeda49cdabf2e03b25e0e7d127c7';
+const PAYSTACK_DEFAULT_EMAIL = 'payments@richtymluxe.com';
 
 // ========================================
 // DOM Elements
@@ -396,7 +397,7 @@ function initPaystack() {
       quantity: item.qty,
       price: item.price
     })),
-    email: `${customerPhone}@temp.com` // Paystack requires email, using phone as fallback
+    email: PAYSTACK_DEFAULT_EMAIL
   };
 
   // Show loading
@@ -583,7 +584,7 @@ function payWithPaystack() {
     time: formData.get('time'),
     notes: formData.get('notes'),
     amount: parseFloat(formData.get('paymentAmount')) || 0,
-    email: '' // Optional email field can be added later
+    email: PAYSTACK_DEFAULT_EMAIL
   };
 
   if (serviceData.amount <= 0) {

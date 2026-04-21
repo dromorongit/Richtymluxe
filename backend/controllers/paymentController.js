@@ -40,7 +40,7 @@ const initializePayment = asyncHandler(async (req, res) => {
     amount: amountInKobo,
     email: email || customerDetails.email || `${customerDetails.phone}@temp.com`,
     reference: payment._id.toString(),
-    callback_url: `${req.protocol}://${req.get('host')}/payment/callback`,
+    callback_url: `${req.protocol}://${req.get('host')}/api/payments/callback`,
     metadata: {
       payment_id: payment._id.toString(),
       payment_type: paymentType,
