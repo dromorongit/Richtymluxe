@@ -11,6 +11,7 @@ const connectDB = require('./config/db');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 const productRoutes = require('./routes/productRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const Admin = require('./models/Admin');
 
 const app = express();
@@ -128,6 +129,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // API Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Seed admin route (for initial setup - should be disabled in production)
 app.post('/api/seed-admin', async (req, res) => {

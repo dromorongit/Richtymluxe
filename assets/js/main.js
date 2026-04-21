@@ -9,6 +9,11 @@
 const API_BASE = 'https://richtymluxe-production.up.railway.app/api';
 
 // ========================================
+// Paystack Configuration
+// ========================================
+const PAYSTACK_PUBLIC_KEY = 'pk_live_01327cc818f9eeda49cdabf2e03b25e0e7d127c7';
+
+// ========================================
 // DOM Elements
 // ========================================
 const header = document.querySelector('.header');
@@ -357,30 +362,131 @@ function sendToWhatsApp() {
   window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
 }
 
-// Paystack
+// Paystack Product Payment
 function initPaystack() {
   const total = getCartTotal();
   if (total === 0) {
     alert('Your cart is empty!');
     return;
   }
-  alert('Paystack integration requires a valid public key. Please configure your Paystack keys in main.js');
-}
 
-// MTN Mobile Money Payment
-function confirmMTNPayment() {
-  const total = getCartTotal();
-  if (total === 0) {
-    alert('Your cart is empty!');
+  // Get customer details
+  const customerName = document.getElementById('customer-name')?.value.trim();
+  const customerPhone = document.getElementById('customer-phone')?.value.trim();
+  const customerAddress = document.getElementById('customer-address')?.value.trim();
+
+  // Validate customer details
+  if (!customerName || !customerPhone || !customerAddress) {
+    alert('Please fill in your name, phone number, and delivery address!');
     return;
   }
-  
-  const message = `*💰 Payment Confirmation Request*\n\n`;
-  message += `I have made payment of GH₵ ${total} via MTN Mobile Money.\n\n`;
-  message += `Please confirm receipt and process my order.`;
-  
-  const encodedMessage = encodeURIComponent(message);
-  window.open(`https://wa.me/233597705175?text=${encodedMessage}`, '_blank');
+
+  // Prepare payment data
+  const paymentData = {
+    amount: total,
+    paymentType: 'product',
+    customerDetails: {
+      name: customerName,
+      phone: customerPhone,
+      address: customerAddress
+    },
+    items: cart.map(item => ({
+      productId: item.id,
+      productName: item.name,
+      quantity: item.qty,
+      price: item.price
+    })),
+    email: `${customerPhone}@temp.com` // Paystack requires email, using phone as fallback
+  };
+
+  // Show loading
+  const paystackBtn = document.querySelector('.cart-paystack-btn');
+  if (paystackBtn) {
+    paystackBtn.disabled = true;
+    paystackBtn.textContent = 'Processing...';
+  }
+
+  // Initialize payment with backend
+  fetch(`${API_BASE}/payments/initialize`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(paymentData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success && data.paystack.authorization_url) {
+      // Redirect to Paystack
+      window.location.href = data.paystack.authorization_url;
+    } else {
+      throw new Error(data.message || 'Payment initialization failed');
+    }
+  })
+  .catch(error => {
+    console.error('Payment error:', error);
+    alert('Payment initialization failed. Please try again.');
+
+    // Reset button
+    if (paystackBtn) {
+      paystackBtn.disabled = false;
+      paystackBtn.textContent = 'Pay with Paystack';
+    }
+  });
+}
+
+// Paystack Service Payment (for booking)
+function initServicePayment(serviceData) {
+  // Show loading
+  const submitBtn = document.querySelector('#booking-form button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing Payment...';
+  }
+
+  const paymentData = {
+    amount: serviceData.amount || 0, // Service amount should be defined
+    paymentType: 'service',
+    customerDetails: {
+      name: serviceData.name,
+      phone: serviceData.phone,
+      email: serviceData.email || `${serviceData.phone}@temp.com`
+    },
+    serviceDetails: {
+      service: serviceData.service,
+      date: serviceData.date,
+      time: serviceData.time,
+      notes: serviceData.notes
+    },
+    email: serviceData.email || `${serviceData.phone}@temp.com`
+  };
+
+  fetch(`${API_BASE}/payments/initialize`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(paymentData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success && data.paystack.authorization_url) {
+      // Redirect to Paystack
+      window.location.href = data.paystack.authorization_url;
+    } else {
+      throw new Error(data.message || 'Payment initialization failed');
+    }
+  })
+  .catch(error => {
+    console.error('Payment error:', error);
+    alert('Payment initialization failed. Please try again.');
+
+    // Reset button
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Pay with Paystack & Book Appointment';
+    }
+  });
 }
 
 // ========================================
@@ -459,56 +565,33 @@ function validateForm(formId) {
   return isValid;
 }
 
-// Booking form
-function submitBooking(event) {
-  event.preventDefault();
-  
-  const submitBtn = event.target.querySelector('button[type="submit"]');
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending...';
-  }
-  
+// Pay with Paystack for booking
+function payWithPaystack() {
+  const form = document.getElementById('booking-form');
   if (!validateForm('booking-form')) {
     alert('Please fill in all required fields');
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit Booking Request';
-    }
     return;
   }
 
-  const form = document.getElementById('booking-form');
   const formData = new FormData(form);
-  
-  const name = formData.get('name');
-  const phone = formData.get('phone');
-  const service = formData.get('service');
-  const date = formData.get('date');
-  const time = formData.get('time');
-  const notes = formData.get('notes');
 
-  let message = `*📅 New Booking Request*\n\n`;
-  message += `*Name:* ${name}\n`;
-  message += `*Phone:* ${phone}\n`;
-  message += `*Service:* ${service}\n`;
-  message += `*Date:* ${date}\n`;
-  message += `*Time:* ${time}\n`;
-  if (notes) message += `*Notes:* ${notes}`;
+  const serviceData = {
+    name: formData.get('name'),
+    phone: formData.get('phone'),
+    service: formData.get('service'),
+    date: formData.get('date'),
+    time: formData.get('time'),
+    notes: formData.get('notes'),
+    amount: parseFloat(formData.get('paymentAmount')) || 0,
+    email: '' // Optional email field can be added later
+  };
 
-  const encodedMessage = encodeURIComponent(message);
-  const whatsappUrl = `https://wa.me/233597705175?text=${encodedMessage}`;
-  
-  window.open(whatsappUrl, '_blank');
-  
-  // Show success message
-  alert('Booking request sent! We will contact you shortly.');
-  form.reset();
-  
-  if (submitBtn) {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit Booking Request';
+  if (serviceData.amount <= 0) {
+    alert('Please enter a valid service amount');
+    return;
   }
+
+  initServicePayment(serviceData);
 }
 
 // Contact form
@@ -742,6 +825,8 @@ window.removeFromCart = removeFromCart;
 window.updateQty = updateQty;
 window.sendToWhatsApp = sendToWhatsApp;
 window.initPaystack = initPaystack;
+window.initServicePayment = initServicePayment;
+window.payWithPaystack = payWithPaystack;
 window.filterGallery = filterGallery;
 window.openCart = openCart;
 window.closeCart = closeCart;
@@ -750,4 +835,3 @@ window.closeNav = closeNav;
 window.addProductToCart = addProductToCart;
 window.loadProductsToPage = loadProductsToPage;
 window.fetchProducts = fetchProducts;
-window.confirmMTNPayment = confirmMTNPayment;
