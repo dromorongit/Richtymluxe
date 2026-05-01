@@ -536,21 +536,22 @@ async function handleProductSubmit(e) {
     const token = localStorage.getItem('adminToken');
     if (!token) return;
     
-    const formData = {
-        productName: document.getElementById('productName').value,
-        shortDescription: document.getElementById('shortDescription').value,
-        longDescription: document.getElementById('longDescription').value,
-        productType: document.getElementById('productType').value,
-        originalPrice: document.getElementById('originalPrice').value ? parseFloat(document.getElementById('originalPrice').value) : undefined,
-        salesPrice: document.getElementById('salesPrice').value ? parseFloat(document.getElementById('salesPrice').value) : undefined,
-        stockQuantity: document.getElementById('stockQuantity').value ? parseInt(document.getElementById('stockQuantity').value) : 0,
-        category: document.getElementById('category').value,
-        isNew: document.getElementById('isNew').checked,
-        isBestseller: document.getElementById('isBestseller').checked,
-        coverImage: coverImagePath.value,
-        additionalImages: additionalImages,
-        colors: document.getElementById('colors').value ? document.getElementById('colors').value.split(',').map(c => c.trim()).filter(c => c) : []
-    };
+     const formData = {
+         productName: document.getElementById('productName').value,
+         shortDescription: document.getElementById('shortDescription').value,
+         longDescription: document.getElementById('longDescription').value,
+         productType: document.getElementById('productType').value,
+         originalPrice: document.getElementById('originalPrice').value ? parseFloat(document.getElementById('originalPrice').value) : undefined,
+         salesPrice: document.getElementById('salesPrice').value ? parseFloat(document.getElementById('salesPrice').value) : undefined,
+         stockQuantity: document.getElementById('stockQuantity').value ? parseInt(document.getElementById('stockQuantity').value) : 0,
+         category: document.getElementById('category').value,
+         isNew: document.getElementById('isNew').checked,
+         isBestseller: document.getElementById('isBestseller').checked,
+         isActive: document.getElementById('isActive').checked,
+         coverImage: coverImagePath.value,
+         additionalImages: additionalImages,
+         colors: document.getElementById('colors').value ? document.getElementById('colors').value.split(',').map(c => c.trim()).filter(c => c) : []
+     };
     
     try {
         const url = editingProductId 

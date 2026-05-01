@@ -95,28 +95,29 @@ const getAllProductsAdmin = async (req, res) => {
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = async (req, res) => {
-  try {
-    const {
-      productName,
-      shortDescription,
-      longDescription,
-      originalPrice,
-      salesPrice,
-      stockQuantity,
-      category,
-      coverImage,
-      additionalImages,
-      isNew,
-      isBestseller,
-      productType,
-      colors
-    } = req.body;
+   try {
+     const {
+       productName,
+       shortDescription,
+       longDescription,
+       originalPrice,
+       salesPrice,
+       stockQuantity,
+       category,
+       coverImage,
+       additionalImages,
+       isNew,
+       isBestseller,
+       productType,
+       colors,
+       isActive
+     } = req.body;
 
-    // Check for duplicate product name
-    const existingProduct = await Product.findOne({ productName });
-    if (existingProduct) {
-      return res.status(400).json({ message: 'Product with this name already exists' });
-    }
+   // Check for duplicate product name
+   const existingProduct = await Product.findOne({ productName });
+   if (existingProduct) {
+     return res.status(400).json({ message: 'Product with this name already exists' });
+   }
 
     const product = new Product({
       productName,
@@ -131,7 +132,8 @@ const createProduct = async (req, res) => {
       colors: colors || [],
       isNew: isNew || false,
       isBestseller: isBestseller || false,
-      productType
+      productType,
+      isActive: isActive !== undefined ? !!isActive : true
     });
 
     const createdProduct = await product.save();
