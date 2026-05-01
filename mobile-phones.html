@@ -702,11 +702,8 @@
   
   <script>
     // ========================================
-    // Mobile Phones - Simplified to use main.js
+    // Mobile Phones - Uses main.js functions
     // ========================================
-    
-    // Override the default renderProductCard for mobile phones format
-    const originalRenderProductCard = renderProductCard;
     
     function renderMobileProductCard(product) {
       // Price logic: only show as slashed if there's a sales price
@@ -754,51 +751,29 @@
       `;
     }
 
-    // Override loadProductsToPage for mobile phones
+    // Load mobile products to the phonesGrid
     async function loadMobileProductsToPage(productType) {
-      const container = document.getElementById('product-container');
-      if (!container) {
-        // Try phonesGrid for mobile-phones.html
-        const grid = document.getElementById('phonesGrid');
-        if (!grid) return;
-        
-        grid.innerHTML = '<div class="loading">Loading products...</div>';
-        
-        try {
-          const response = await fetch(`${API_BASE}/products/${productType}`);
-          if (response.ok) {
-            const data = await response.json();
-            if (data.length === 0) {
-              grid.innerHTML = '<div class="no-products">No products available. Check back soon!</div>';
-              return;
-            }
-            products = data;
-            grid.innerHTML = data.map(product => renderMobileProductCard(product)).join('');
-          }
-        } catch (error) {
-          console.error('Error fetching products:', error);
-          grid.innerHTML = '<div class="no-products">Error loading products. Please try again!</div>';
-        }
+      const grid = document.getElementById('phonesGrid');
+      if (!grid) {
+        console.error('phonesGrid element not found');
         return;
       }
-
-      container.innerHTML = '<div class="loading">Loading products...</div>';
+      
+      grid.innerHTML = '<div class="loading" style="padding:20px;text-align:center;">Loading products...</div>';
 
       try {
-        const response = await fetch(`${API_BASE}/products/${productType}`);
-        if (response.ok) {
-          products = await response.json();
+        const data = await fetchProducts(productType);
+        if (data.length === 0) {
+          grid.innerHTML = '<div class="no-products" style="padding:40px;text-align:center;">No products available. Check back soon!</div>';
+          return;
         }
+        // Update the global products array from main.js
+        window.products = data;
+        grid.innerHTML = data.map(product => renderMobileProductCard(product)).join('');
       } catch (error) {
         console.error('Error fetching products:', error);
+        grid.innerHTML = '<div class="no-products" style="padding:40px;text-align:center;">Error loading products. Please try again!</div>';
       }
-
-      if (products.length === 0) {
-        container.innerHTML = '<div class="no-products">No products available. Check back soon!</div>';
-        return;
-      }
-
-      container.innerHTML = products.map(product => renderMobileProductCard(product)).join('');
     }
 
     // ========================================
@@ -811,7 +786,7 @@
     
     // Add phone to cart - adds to cart and redirects to checkout
     window.addPhoneToCart = function(productId) {
-      const product = products.find(p => p._id === productId);
+      const product = (window.products || []).find(p => p._id === productId);
       if (!product) return;
       
       const price = product.salesPrice || product.originalPrice || 0;
@@ -922,7 +897,7 @@
     
     // Add to cart and send to WhatsApp directly
     window.addToCartAndWhatsApp = function(productId) {
-      const product = products.find(p => p._id === productId);
+      const product = (window.products || []).find(p => p._id === productId);
       if (!product) return;
       
       const price = product.salesPrice || product.originalPrice || 0;
@@ -942,7 +917,7 @@
     
     // Make function globally available
     window.openProductModal = function(productId) {
-      const product = products.find(p => p._id === productId);
+      const product = (window.products || []).find(p => p._id === productId);
       if (!product) return;
       
       // Populate modal

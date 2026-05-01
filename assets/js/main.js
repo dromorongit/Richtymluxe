@@ -169,7 +169,8 @@ async function loadProductsToPage(productType) {
   container.innerHTML = '<div class="loading" style="padding:20px;text-align:center;">Loading products...</div>';
 
   products = await fetchProducts(productType);
-  console.log('loadProductsToPage - products length:', products.length);
+   window.products = products; // Make products globally accessible
+   console.log('loadProductsToPage - products length:', products.length);
 
   if (products.length === 0) {
     container.innerHTML = '<div class="no-products" style="padding:40px;text-align:center;">No products available. Check back soon!</div>';
@@ -1272,24 +1273,25 @@ window.initServicePayment = initServicePayment;
   }
 
   // Make functions globally available
-  window.addToCart = addToCart;
-  window.removeFromCart = removeFromCart;
-  window.updateQty = updateQty;
-  window.sendToWhatsApp = sendToWhatsApp;
-  window.initPaystack = initPaystack;
-  window.initServicePayment = initServicePayment;
-  window.payWithPaystack = payWithPaystack;
-  window.filterGallery = filterGallery;
-  window.openCart = openCart;
-  window.closeCart = closeCart;
-  window.toggleNav = toggleNav;
-  window.closeNav = closeNav;
-  window.addProductToCart = addProductToCart;
-  window.loadProductsToPage = loadProductsToPage;
-  window.fetchProducts = fetchProducts;
-  window.updateCartItemQty = updateCartItemQty;
-  window.removeCartItem = removeCartItem;
-  window.clearCart = clearCart;
-  window.processPaystackPayment = processPaystackPayment;
-  window.submitWhatsAppOrder = submitWhatsAppOrder;
-  window.checkPaymentCallback = checkPaymentCallback;
+   window.addToCart = addToCart;
+   window.removeFromCart = removeFromCart;
+   window.updateQty = updateQty;
+   window.sendToWhatsApp = sendToWhatsApp;
+   window.initPaystack = initPaystack;
+   window.initServicePayment = initServicePayment;
+   window.payWithPaystack = payWithPaystack;
+   window.filterGallery = filterGallery;
+   window.openCart = openCart;
+   window.closeCart = closeCart;
+   window.toggleNav = toggleNav;
+   window.closeNav = closeNav;
+   window.addProductToCart = addProductToCart;
+   window.loadProductsToPage = loadProductsToPage;
+   window.fetchProducts = fetchProducts;
+   window.updateCartItemQty = updateCartItemQty;
+   window.removeCartItem = removeCartItem;
+   window.clearCart = clearCart;
+   window.processPaystackPayment = processPaystackPayment;
+   window.submitWhatsAppOrder = submitWhatsAppOrder;
+   window.checkPaymentCallback = checkPaymentCallback;
+   window.renderProductCard = renderProductCard;
