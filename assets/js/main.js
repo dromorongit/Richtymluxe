@@ -36,33 +36,38 @@ let cart = [];
 let products = [];
 
  // Initialize cart
- function initCart() {
-   try {
-     const savedCart = localStorage.getItem('richTymCart');
-     if (savedCart) {
-       cart = JSON.parse(savedCart);
-       console.log('Cart loaded from localStorage:', cart);
-       updateCartCount();
-       // renderCartItems() - removed (mini cart disabled)
-     }
-     
-     // Load saved customer details
-     const savedCustomer = localStorage.getItem('richtymluxe_customer');
-     if (savedCustomer) {
-       const customer = JSON.parse(savedCustomer);
-       const nameInput = document.getElementById('customer-name');
-       const phoneInput = document.getElementById('customer-phone');
-       const addressInput = document.getElementById('customer-address');
-       
-       if (nameInput) nameInput.value = customer.name || '';
-       if (phoneInput) phoneInput.value = customer.phone || '';
-       if (addressInput) addressInput.value = customer.address || '';
-     }
-   } catch (e) {
-     console.log('Cart initialization error:', e);
-     cart = [];
-   }
- }
+  function initCart() {
+    try {
+      const savedCart = localStorage.getItem('richTymCart');
+      if (savedCart) {
+        cart = JSON.parse(savedCart);
+        console.log('Cart loaded from localStorage:', cart);
+        updateCartCount();
+        renderCartPageItems();
+        renderCheckoutSummary();
+      }
+      
+      // Load saved customer details
+      const savedCustomer = localStorage.getItem('richtymluxe_customer');
+      if (savedCustomer) {
+        const customer = JSON.parse(savedCustomer);
+        const nameInput = document.getElementById('customer-name');
+        const phoneInput = document.getElementById('customer-phone');
+        const addressInput = document.getElementById('customer-address');
+        
+        if (nameInput) nameInput.value = customer.name || '';
+        if (phoneInput) phoneInput.value = customer.phone || '';
+        if (addressInput) addressInput.value = customer.address || '';
+      }
+    } catch (e) {
+      console.log('Cart initialization error:', e);
+      cart = [];
+    }
+    
+    // Always render cart summary and items in case cart is empty or we need to update UI
+    renderCartPageItems();
+    renderCheckoutSummary();
+  }
 
 // ========================================
 // Product Fetching from API
