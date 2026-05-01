@@ -35,33 +35,34 @@ const navMenu = document.querySelector('.nav-menu');
 let cart = [];
 let products = [];
 
-// Initialize cart
-function initCart() {
-  try {
-    const savedCart = localStorage.getItem('richtymluxe_cart');
-    if (savedCart) {
-      cart = JSON.parse(savedCart);
-      updateCartCount();
-      // renderCartItems() - removed (mini cart disabled)
-    }
-    
-    // Load saved customer details
-    const savedCustomer = localStorage.getItem('richtymluxe_customer');
-    if (savedCustomer) {
-      const customer = JSON.parse(savedCustomer);
-      const nameInput = document.getElementById('customer-name');
-      const phoneInput = document.getElementById('customer-phone');
-      const addressInput = document.getElementById('customer-address');
-      
-      if (nameInput) nameInput.value = customer.name || '';
-      if (phoneInput) phoneInput.value = customer.phone || '';
-      if (addressInput) addressInput.value = customer.address || '';
-    }
-  } catch (e) {
-    console.log('Cart initialization error:', e);
-    cart = [];
-  }
-}
+ // Initialize cart
+ function initCart() {
+   try {
+     const savedCart = localStorage.getItem('richTymCart');
+     if (savedCart) {
+       cart = JSON.parse(savedCart);
+       console.log('Cart loaded from localStorage:', cart);
+       updateCartCount();
+       // renderCartItems() - removed (mini cart disabled)
+     }
+     
+     // Load saved customer details
+     const savedCustomer = localStorage.getItem('richtymluxe_customer');
+     if (savedCustomer) {
+       const customer = JSON.parse(savedCustomer);
+       const nameInput = document.getElementById('customer-name');
+       const phoneInput = document.getElementById('customer-phone');
+       const addressInput = document.getElementById('customer-address');
+       
+       if (nameInput) nameInput.value = customer.name || '';
+       if (phoneInput) phoneInput.value = customer.phone || '';
+       if (addressInput) addressInput.value = customer.address || '';
+     }
+   } catch (e) {
+     console.log('Cart initialization error:', e);
+     cart = [];
+   }
+ }
 
 // ========================================
 // Product Fetching from API
@@ -132,15 +133,22 @@ function addProductToCart(productId) {
     const price = product.salesPrice || product.originalPrice || 0;
     const cartProduct = {
       id: product._id,
-      name: product.productName,
-      price: price,
-      image: product.coverImage || ''
+      productName: product.productName,
+      productType: 'boutique', // Default for shop.html products
+      category: product.category || 'Unisex Fashion', // Default category
+      coverImage: product.coverImage || '',
+      originalPrice: product.originalPrice || 0,
+      salesPrice: product.salesPrice || null,
+      finalPrice: price,
+      quantity: 1,
+      selectedStorage: null,
+      selectedColor: null
     };
     const existingItem = cart.find(item => String(item.id) === String(productId));
     if (existingItem) {
-      existingItem.qty++;
+      existingItem.quantity++;
     } else {
-      cart.push({ ...cartProduct, qty: 1 });
+      cart.push(cartProduct);
     }
     saveCart();
     // Show toast notification
@@ -191,25 +199,25 @@ async function loadProductsToPage(productType) {
 
   // Save cart
   function saveCart() {
-    try {
-      localStorage.setItem('richtymluxe_cart', JSON.stringify(cart));
-      
-      // Save customer details
-      const customerDetails = {
-        name: document.getElementById('customer-name')?.value || '',
-        phone: document.getElementById('customer-phone')?.value || '',
-        address: document.getElementById('customer-address')?.value || ''
-      };
-      localStorage.setItem('richtymluxe_customer', JSON.stringify(customerDetails));
-      
-      updateCartCount();
-      // renderCartItems() - removed (mini cart disabled)
-      renderCartPageItems();
-      renderCheckoutSummary();
-    } catch (e) {
-      console.log('Cart save error:', e);
-    }
+  try {
+    localStorage.setItem('richTymCart', JSON.stringify(cart));
+    
+    // Save customer details
+    const customerDetails = {
+      name: document.getElementById('customer-name')?.value || '',
+      phone: document.getElementById('customer-phone')?.value || '',
+      address: document.getElementById('customer-address')?.value || ''
+    };
+    localStorage.setItem('richtymluxe_customer', JSON.stringify(customerDetails));
+    
+    updateCartCount();
+    // renderCartItems() - removed (mini cart disabled)
+    renderCartPageItems();
+    renderCheckoutSummary();
+  } catch (e) {
+    console.log('Cart save error:', e);
   }
+}
 
   // Render cart items for cart page
   function renderCartPageItems() {
@@ -245,81 +253,81 @@ async function loadProductsToPage(productType) {
       return;
     }
     
-    // Render cart items list
-    if (cartItemsList) {
-      cartItemsList.innerHTML = cart.map((item, index) => `
-        <div class="cart-item-card" data-index="${index}">
-          <div class="cart-item-image">
-            <img src="${item.image || 'assets/images/Richtymluxe.PNG'}" alt="${item.name}" loading="lazy">
-          </div>
-          <div class="cart-item-details">
-            <h4 class="cart-item-name">${item.name}</h4>
-            ${item.category ? `<p class="cart-item-category">${item.category}</p>` : ''}
-            ${item.selectedStorage || item.selectedColor ? `
-              <div class="cart-item-variants">
-                ${item.selectedStorage ? `<span class="cart-item-variant">${item.selectedStorage}</span>` : ''}
-                ${item.selectedColor ? `<span class="cart-item-variant">${item.selectedColor}</span>` : ''}
-              </div>
-            ` : ''}
-            <div class="cart-item-price-row">
-              <span class="cart-item-price">GH₵ ${item.price}</span>
-              ${item.originalPrice && item.originalPrice > item.price ? `
-                <span class="cart-item-original-price">GH₵ ${item.originalPrice}</span>
-                <span class="cart-item-discount-badge">-${Math.round((1 - item.price/item.originalPrice) * 100)}%</span>
-              ` : ''}
-            </div>
-            <div class="cart-item-quantity">
-              <button class="cart-qty-btn" onclick="updateCartItemQty(${index}, -1)" aria-label="Decrease quantity">-</button>
-              <span class="cart-qty-value">${item.qty}</span>
-              <button class="cart-qty-btn" onclick="updateCartItemQty(${index}, 1)" aria-label="Increase quantity">+</button>
-            </div>
-          </div>
-          <div class="cart-item-remove">
-            <span class="cart-item-line-total">Line Total: <strong>GH₵ ${(item.price * item.qty).toFixed(2)}</strong></span>
-            <button class="remove-item-btn" onclick="removeCartItem(${index})" aria-label="Remove item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-              Remove
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
+     // Render cart items list
+     if (cartItemsList) {
+       cartItemsList.innerHTML = cart.map((item, index) => `
+         <div class="cart-item-card" data-index="${index}">
+           <div class="cart-item-image">
+             <img src="${item.coverImage || 'assets/images/Richtymluxe.PNG'}" alt="${item.productName}" loading="lazy">
+           </div>
+           <div class="cart-item-details">
+             <h4 class="cart-item-name">${item.productName}</h4>
+             ${item.category ? `<p class="cart-item-category">${item.category}</p>` : ''}
+             ${item.selectedStorage || item.selectedColor ? `
+               <div class="cart-item-variants">
+                 ${item.selectedStorage ? `<span class="cart-item-variant">${item.selectedStorage}</span>` : ''}
+                 ${item.selectedColor ? `<span class="cart-item-variant">${item.selectedColor}</span>` : ''}
+               </div>
+             ` : ''}
+             <div class="cart-item-price-row">
+               <span class="cart-item-price">GH₵ ${item.finalPrice}</span>
+               ${item.originalPrice && item.originalPrice > item.finalPrice ? `
+                 <span class="cart-item-original-price">GH₵ ${item.originalPrice}</span>
+                 <span class="cart-item-discount-badge">-${Math.round((1 - item.finalPrice/item.originalPrice) * 100)}%</span>
+               ` : ''}
+             </div>
+             <div class="cart-item-quantity">
+               <button class="cart-qty-btn" onclick="updateCartItemQty(${index}, -1)" aria-label="Decrease quantity">-</button>
+               <span class="cart-qty-value">${item.quantity}</span>
+               <button class="cart-qty-btn" onclick="updateCartItemQty(${index}, 1)" aria-label="Increase quantity">+</button>
+             </div>
+           </div>
+           <div class="cart-item-remove">
+             <span class="cart-item-line-total">Line Total: <strong>GH₵ ${(item.finalPrice * item.quantity).toFixed(2)}</strong></span>
+             <button class="remove-item-btn" onclick="removeCartItem(${index})" aria-label="Remove item">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                 <path d="M6 18L18 6M6 6l12 12"/>
+               </svg>
+               Remove
+             </button>
+           </div>
+         </div>
+       `).join('');
+     }
     
-    // Render summary items
-    if (summaryItemsList) {
-      summaryItemsList.innerHTML = cart.map(item => `
-        <div class="summary-item">
-          <span class="summary-item-name">${item.name} ${item.selectedStorage ? `(${item.selectedStorage})` : ''} ${item.selectedColor ? `(${item.selectedColor})` : ''}</span>
-          <span class="summary-item-qty">x${item.qty}</span>
-          <span class="summary-item-price">GH₵ ${(item.price * item.qty).toFixed(2)}</span>
-        </div>
-      `).join('');
-    }
+     // Render summary items
+     if (summaryItemsList) {
+       summaryItemsList.innerHTML = cart.map(item => `
+         <div class="summary-item">
+           <span class="summary-item-name">${item.productName} ${item.selectedStorage ? `(${item.selectedStorage})` : ''} ${item.selectedColor ? `(${item.selectedColor})` : ''}</span>
+           <span class="summary-item-qty">x${item.quantity}</span>
+           <span class="summary-item-price">GH₵ ${(item.finalPrice * item.quantity).toFixed(2)}</span>
+         </div>
+       `).join('');
+     }
     
-    // Update count
-    if (cartItemsCount) {
-      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-      cartItemsCount.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
-    }
+     // Update count
+     if (cartItemsCount) {
+       const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+       cartItemsCount.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+     }
     
-    // Update summary
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-    updateCartSummary(subtotal, totalQty, subtotal);
+   // Update summary
+     const subtotal = cart.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
+     const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+     updateCartSummary(subtotal, totalQty, subtotal);
   }
 
-  // Update cart item quantity
-  function updateCartItemQty(index, change) {
-    if (index >= 0 && index < cart.length) {
-      cart[index].qty += change;
-      if (cart[index].qty <= 0) {
-        cart.splice(index, 1);
-      }
-      saveCart();
-    }
-  }
+   // Update cart item quantity
+   function updateCartItemQty(index, change) {
+     if (index >= 0 && index < cart.length) {
+       cart[index].quantity += change;
+       if (cart[index].quantity <= 0) {
+         cart.splice(index, 1);
+       }
+       saveCart();
+     }
+   }
 
   // Remove cart item
   function removeCartItem(index) {
@@ -379,15 +387,15 @@ async function loadProductsToPage(productType) {
     updateCartSummary(subtotal, totalQty, subtotal);
   }
 
-// Update cart count
-function updateCartCount() {
-  const cartCount = document.querySelector('.cart-count');
-  if (cartCount) {
-    const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-    cartCount.textContent = totalItems;
-    cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
-  }
-}
+   // Update cart count
+   function updateCartCount() {
+     const cartCount = document.querySelector('.cart-count');
+     if (cartCount) {
+       const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+       cartCount.textContent = totalItems;
+       cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+     }
+   }
 
 // Show toast notification
 function showToast(message = 'Product added to cart successfully.', showViewCart = true) {
@@ -424,11 +432,25 @@ function showToast(message = 'Product added to cart successfully.', showViewCart
 function addToCart(productId) {
   const product = products.find(p => String(p.id) === String(productId));
   if (product) {
+    const price = product.salesPrice || product.originalPrice || 0;
+    const cartProduct = {
+      id: product._id,
+      productName: product.productName,
+      productType: 'boutique', // Default for shop.html products
+      category: product.category || 'Unisex Fashion', // Default category
+      coverImage: product.coverImage || '',
+      originalPrice: product.originalPrice || 0,
+      salesPrice: product.salesPrice || null,
+      finalPrice: price,
+      quantity: 1,
+      selectedStorage: null,
+      selectedColor: null
+    };
     const existingItem = cart.find(item => String(item.id) === String(productId));
     if (existingItem) {
-      existingItem.qty++;
+      existingItem.quantity++;
     } else {
-      cart.push({ ...product, qty: 1 });
+      cart.push(cartProduct);
     }
     saveCart();
     // Show toast notification
@@ -448,8 +470,8 @@ function removeFromCart(productId) {
 function updateQty(productId, change) {
   const item = cart.find(item => String(item.id) === String(productId));
   if (item) {
-    item.qty += change;
-    if (item.qty <= 0) {
+    item.quantity += change;
+    if (item.quantity <= 0) {
       removeFromCart(productId);
     } else {
       saveCart();

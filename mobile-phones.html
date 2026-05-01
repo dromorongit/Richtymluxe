@@ -732,80 +732,87 @@
       initCart();
     });
     
-    // Add phone to cart - adds to cart and redirects to checkout
-    window.addPhoneToCart = function(productId) {
-      const product = (window.products || []).find(p => p._id === productId);
-      if (!product) return;
-      
-      const price = product.salesPrice || product.originalPrice || 0;
-      const cartProduct = {
-        id: product._id,
-        name: product.productName,
-        price: price,
-        image: product.coverImage || ''
-      };
-      
-      const existingItem = cart.find(item => item.id === productId);
-      if (existingItem) {
-        existingItem.qty++;
-      } else {
-        cart.push({ ...cartProduct, qty: 1 });
-      }
-      
-      saveCart();
-      updateCartCount();
-      renderCartItems();
-      
-      // Show toast notification
-      if (typeof showToast === 'function') {
-        showToast('Product added to cart successfully.', true);
-      }
-    };
+     // Add phone to cart - adds to cart and redirects to checkout
+     window.addPhoneToCart = function(productId) {
+       const product = (window.products || []).find(p => p._id === productId);
+       if (!product) return;
+       
+       const price = product.salesPrice || product.originalPrice || 0;
+       const cartProduct = {
+         id: product._id,
+         productName: product.productName,
+         productType: 'mobile',
+         category: product.category || 'Mobile Phones',
+         coverImage: product.coverImage || '',
+         originalPrice: product.originalPrice || 0,
+         salesPrice: product.salesPrice || null,
+         finalPrice: price,
+         quantity: 1,
+         selectedStorage: null,
+         selectedColor: null
+       };
+       
+       const existingItem = cart.find(item => String(item.id) === String(productId));
+       if (existingItem) {
+         existingItem.quantity++;
+       } else {
+         cart.push(cartProduct);
+       }
+       
+       saveCart();
+       updateCartCount();
+       renderCartPageItems();
+       
+       // Show toast notification
+       if (typeof showToast === 'function') {
+         showToast('Product added to cart successfully.', true);
+       }
+     };
     
-    // Save cart to localStorage with customer details
-    function saveCart() {
-      try {
-        localStorage.setItem('richtymluxe_cart', JSON.stringify(cart));
-        
-        // Save customer details
-        const customerDetails = {
-          name: document.getElementById('customer-name')?.value || '',
-          phone: document.getElementById('customer-phone')?.value || '',
-          address: document.getElementById('customer-address')?.value || ''
-        };
-        localStorage.setItem('richtymluxe_customer', JSON.stringify(customerDetails));
-      } catch (e) {
-        console.log('Cart save error:', e);
-      }
-    }
+     // Save cart to localStorage with customer details
+     function saveCart() {
+       try {
+         localStorage.setItem('richTymCart', JSON.stringify(cart));
+         
+         // Save customer details
+         const customerDetails = {
+           name: document.getElementById('customer-name')?.value || '',
+           phone: document.getElementById('customer-phone')?.value || '',
+           address: document.getElementById('customer-address')?.value || ''
+         };
+         localStorage.setItem('richtymluxe_customer', JSON.stringify(customerDetails));
+       } catch (e) {
+         console.log('Cart save error:', e);
+       }
+     }
     
-    // Load cart and customer from localStorage
-    function initCart() {
-      try {
-        const savedCart = localStorage.getItem('richtymluxe_cart');
-        if (savedCart) {
-          cart = JSON.parse(savedCart);
-          updateCartCount();
-          renderCartItems();
-        }
-        
-        // Load saved customer details
-        const savedCustomer = localStorage.getItem('richtymluxe_customer');
-        if (savedCustomer) {
-          const customer = JSON.parse(savedCustomer);
-          const nameInput = document.getElementById('customer-name');
-          const phoneInput = document.getElementById('customer-phone');
-          const addressInput = document.getElementById('customer-address');
-          
-          if (nameInput) nameInput.value = customer.name || '';
-          if (phoneInput) phoneInput.value = customer.phone || '';
-          if (addressInput) addressInput.value = customer.address || '';
-        }
-      } catch (e) {
-        console.log('Cart initialization error:', e);
-        cart = [];
-      }
-    }
+     // Load cart and customer from localStorage
+     function initCart() {
+       try {
+         const savedCart = localStorage.getItem('richTymCart');
+         if (savedCart) {
+           cart = JSON.parse(savedCart);
+           updateCartCount();
+           renderCartItems();
+         }
+         
+         // Load saved customer details
+         const savedCustomer = localStorage.getItem('richtymluxe_customer');
+         if (savedCustomer) {
+           const customer = JSON.parse(savedCustomer);
+           const nameInput = document.getElementById('customer-name');
+           const phoneInput = document.getElementById('customer-phone');
+           const addressInput = document.getElementById('customer-address');
+           
+           if (nameInput) nameInput.value = customer.name || '';
+           if (phoneInput) phoneInput.value = customer.phone || '';
+           if (addressInput) addressInput.value = customer.address || '';
+         }
+       } catch (e) {
+         console.log('Cart initialization error:', e);
+         cart = [];
+       }
+     }
     
     // Make function globally available
     window.openProductModal = function(productId) {
@@ -832,60 +839,74 @@
       document.body.style.overflow = '';
     };
     
-    // Add to cart from modal
-    window.addToCartFromModal = function() {
-      const product = window.currentModalProduct;
-      if (!product) return;
-      
-      const price = product.salesPrice || product.originalPrice || 0;
-      const cartProduct = {
-        id: product._id,
-        name: product.productName,
-        price: price,
-        image: product.coverImage || ''
-      };
-      
-      const existingItem = cart.find(item => item.id === product._id);
-      if (existingItem) {
-        existingItem.qty++;
-      } else {
-        cart.push({ ...cartProduct, qty: 1 });
-      }
-      
-      saveCart();
-      updateCartCount();
-      renderCartItems();
-      alert('Added to cart!');
-    };
+     // Add to cart from modal
+     window.addToCartFromModal = function() {
+       const product = window.currentModalProduct;
+       if (!product) return;
+       
+       const price = product.salesPrice || product.originalPrice || 0;
+       const cartProduct = {
+         id: product._id,
+         productName: product.productName,
+         productType: 'mobile',
+         category: product.category || 'Mobile Phones',
+         coverImage: product.coverImage || '',
+         originalPrice: product.originalPrice || 0,
+         salesPrice: product.salesPrice || null,
+         finalPrice: price,
+         quantity: 1,
+         selectedStorage: null,
+         selectedColor: null
+       };
+       
+       const existingItem = cart.find(item => String(item.id) === String(product._id));
+       if (existingItem) {
+         existingItem.quantity++;
+       } else {
+         cart.push(cartProduct);
+       }
+       
+       saveCart();
+       updateCartCount();
+       renderCartPageItems();
+       alert('Added to cart!');
+     };
     
-    // Buy now from modal - add to cart and redirect to checkout
-    window.buyNowFromModal = function() {
-      const product = window.currentModalProduct;
-      if (!product) return;
-      
-      const price = product.salesPrice || product.originalPrice || 0;
-      const cartProduct = {
-        id: product._id,
-        name: product.productName,
-        price: price,
-        image: product.coverImage || ''
-      };
-      
-      const existingItem = cart.find(item => item.id === product._id);
-      if (existingItem) {
-        existingItem.qty++;
-      } else {
-        cart.push({ ...cartProduct, qty: 1 });
-      }
-      
-      saveCart();
-      updateCartCount();
-      renderCartItems();
-      
-      // Close modal and redirect to checkout
-      closeProductModal();
-      window.location.href = 'checkout.html';
-    };
+     // Buy now from modal - add to cart and redirect to checkout
+     window.buyNowFromModal = function() {
+       const product = window.currentModalProduct;
+       if (!product) return;
+       
+       const price = product.salesPrice || product.originalPrice || 0;
+       const cartProduct = {
+         id: product._id,
+         productName: product.productName,
+         productType: 'mobile',
+         category: product.category || 'Mobile Phones',
+         coverImage: product.coverImage || '',
+         originalPrice: product.originalPrice || 0,
+         salesPrice: product.salesPrice || null,
+         finalPrice: price,
+         quantity: 1,
+         selectedStorage: null,
+         selectedColor: null
+       };
+       
+       const existingItem = cart.find(item => String(item.id) === String(product._id));
+       if (existingItem) {
+         existingItem.quantity++;
+       } else {
+         cart.push(cartProduct);
+       }
+       
+       saveCart();
+       updateCartCount();
+       renderCartPageItems();
+       
+       // Close modal and redirect to checkout
+       closeProductModal();
+       window.location.href = 'checkout.html';
+     };
     
     // Change quantity in modal
     window.changeModalQty = function(change) {
