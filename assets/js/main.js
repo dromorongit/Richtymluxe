@@ -1283,8 +1283,47 @@ window.initServicePayment = initServicePayment;
    window.checkPaymentCallback = checkPaymentCallback;
    window.renderProductCard = renderProductCard;
 
-   // Initialize cart and render checkout summary on DOM load
-   document.addEventListener('DOMContentLoaded', function() {
-       initCart();
-       renderCheckoutSummary();
-   });
+    // Initialize cart and render checkout summary on DOM load
+    document.addEventListener('DOMContentLoaded', function() {
+        initCart();
+        renderCheckoutSummary();
+        initDeliveryPickupToggle();
+    });
+
+    // Initialize delivery/pickup toggle functionality
+    function initDeliveryPickupToggle() {
+        const deliveryOptionRadios = document.querySelectorAll('input[name="deliveryOption"]');
+        const locationField = document.getElementById('location');
+        const locationLabel = document.querySelector('label[for="location"]');
+        
+        if (!deliveryOptionRadios.length || !locationField) return;
+
+        // Function to update field state based on selected option
+        function updateLocationFieldState() {
+            const isPickup = document.querySelector('input[name="deliveryOption"][value="pickup"]:checked');
+            
+            if (isPickup) {
+                // For pickup, make location field optional and change placeholder
+                locationField.removeAttribute('required');
+                locationField.placeholder = 'Enter your pickup location (optional)';
+                if (locationLabel) {
+                    locationLabel.innerHTML = 'Location / Pickup Location <span class="required">*</span>';
+                }
+            } else {
+                // For delivery, make location field required
+                locationField.setAttribute('required', '');
+                locationField.placeholder = 'Enter your delivery address';
+                if (locationLabel) {
+                    locationLabel.innerHTML = 'Location / Delivery Address <span class="required">*</span>';
+                }
+            }
+        }
+
+        // Add event listeners to delivery option radios
+        deliveryOptionRadios.forEach(radio => {
+            radio.addEventListener('change', updateLocationFieldState);
+        });
+
+        // Initialize state on page load
+        updateLocationFieldState();
+    }
