@@ -11,11 +11,12 @@ const initializePayment = asyncHandler(async (req, res) => {
     paymentType,
     customerDetails,
     items,
-    serviceDetails
+    serviceDetails,
+    reference
   } = req.body;
 
   // Validate required fields
-  if (!amount || !paymentType || !customerDetails) {
+  if (!amount || !paymentType || !customerDetails || !reference) {
     res.status(400);
     throw new Error('Missing required payment information');
   }
@@ -25,6 +26,7 @@ const initializePayment = asyncHandler(async (req, res) => {
 
   // Create payment record
   const payment = new Payment({
+    reference,
     amount,
     currency: 'GHS',
     paymentType,
@@ -39,13 +41,14 @@ const initializePayment = asyncHandler(async (req, res) => {
   const paystackResponse = await Paystack.transaction.initialize({
     amount: amountInKobo,
     email: email || customerDetails.email || `${customerDetails.phone}@temp.com`,
-    reference: payment._id.toString(),
+    reference: reference,
     callback_url: `${req.protocol}://${req.get('host')}/api/payments/callback`,
     metadata: {
       payment_id: payment._id.toString(),
       payment_type: paymentType,
       customer_name: customerDetails.name,
-      customer_phone: customerDetails.phone
+      customer_phone: customerDetails.phone,
+      reference: reference
     }
   });
 
@@ -206,10 +209,10 @@ const paymentCallback = asyncHandler(async (req, res) => {
       await payment.save();
 
       // Redirect to success page
-      return res.redirect('/?payment=success&ref=' + reference);
+      return res.redirect('/?payment=success&reference=' + reference);
     } else {
       // Redirect to failure page
-      return res.redirect('/?payment=failed&ref=' + reference);
+      return res.redirect('/?payment=failed&reference=' + reference);
     }
   } catch (error) {
     console.error('Payment callback error:', error);

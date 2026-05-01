@@ -977,6 +977,13 @@ window.removeFromCart = removeFromCart;
 window.updateQty = updateQty;
 window.initPaystack = initPaystack;
 window.initServicePayment = initServicePayment;
+// Generate unique payment reference
+  function generatePaymentReference() {
+    const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 8); // YYYYMMDD
+    const randomString = Math.random().toString(36).substring(2, 8).toUpperCase();
+    return `RTL-${timestamp}-${randomString}`;
+  }
+
 // Process Paystack payment for checkout
   function processPaystackPayment() {
     if (cart.length === 0) {
@@ -1043,8 +1050,12 @@ window.initServicePayment = initServicePayment;
       paymentStatus.style.display = 'block';
     }
 
+    // Generate unique payment reference
+    const paymentReference = generatePaymentReference();
+    
     // Prepare payment data
     const paymentData = {
+      reference: paymentReference,
       amount: grandTotal,
       paymentType: 'product',
       customerDetails: {
@@ -1136,12 +1147,12 @@ window.initServicePayment = initServicePayment;
       return;
     }
 
-    const { customerDetails, items, deliveryOption, additionalNotes, paystackReference } = orderData;
+    const { customerDetails, items, deliveryOption, additionalNotes, paystackReference, reference } = orderData;
     const grandTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     // Build WhatsApp message
     let message = `*🛍️ New Paid Order - Rich Tym Luxe*\n\n`;
-    message += `*Order Reference:* ${paystackReference || 'N/A'}\n`;
+    message += `*Order Reference:* ${reference || 'N/A'}\n`;
     message += `*Paystack Reference:* ${paystackReference || 'N/A'}\n\n`;
     
     message += `*Customer Details:*\n`;
