@@ -11,7 +11,6 @@ const API_BASE = 'https://richtymluxe-production.up.railway.app/api';
 // ========================================
 // Paystack Configuration
 // ========================================
-const PAYSTACK_PUBLIC_KEY = 'pk_live_01327cc818f9eeda49cdabf2e03b25e0e7d127c7';
 const PAYSTACK_DEFAULT_EMAIL = 'payments@richtymluxe.com';
 
 // ========================================
@@ -186,25 +185,195 @@ async function loadProductsToPage(productType) {
   console.log('Products rendered to DOM. Container HTML length:', container.innerHTML.length);
 }
 
-// Save cart
-function saveCart() {
-  try {
-    localStorage.setItem('richtymluxe_cart', JSON.stringify(cart));
-    
-    // Save customer details
-    const customerDetails = {
-      name: document.getElementById('customer-name')?.value || '',
-      phone: document.getElementById('customer-phone')?.value || '',
-      address: document.getElementById('customer-address')?.value || ''
-    };
-    localStorage.setItem('richtymluxe_customer', JSON.stringify(customerDetails));
-    
-    updateCartCount();
-    renderCartItems();
-  } catch (e) {
-    console.log('Cart save error:', e);
+  // Save cart
+  function saveCart() {
+    try {
+      localStorage.setItem('richtymluxe_cart', JSON.stringify(cart));
+      
+      // Save customer details
+      const customerDetails = {
+        name: document.getElementById('customer-name')?.value || '',
+        phone: document.getElementById('customer-phone')?.value || '',
+        address: document.getElementById('customer-address')?.value || ''
+      };
+      localStorage.setItem('richtymluxe_customer', JSON.stringify(customerDetails));
+      
+      updateCartCount();
+      renderCartItems();
+      renderCartPageItems();
+      renderCheckoutSummary();
+    } catch (e) {
+      console.log('Cart save error:', e);
+    }
   }
-}
+
+  // Render cart items for cart page
+  function renderCartPageItems() {
+    const cartItemsList = document.getElementById('cartItemsList');
+    const summaryItemsList = document.getElementById('summaryItemsList');
+    const cartItemsCount = document.getElementById('cartItemsCount');
+    
+    if (!cartItemsList && !summaryItemsList) return;
+    
+    if (cart.length === 0) {
+      if (cartItemsList) {
+        cartItemsList.innerHTML = `
+          <div class="empty-cart-state">
+            <div class="empty-cart-icon">
+              <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            </div>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added anything to your cart yet.</p>
+            <div class="empty-cart-actions">
+              <a href="shop.html" class="btn btn-primary">Shop Now</a>
+              <a href="mobile-phones.html" class="btn btn-secondary">Browse Phones</a>
+            </div>
+          </div>
+        `;
+      }
+      if (cartItemsCount) {
+        cartItemsCount.textContent = '0 items';
+      }
+      if (summaryItemsList) {
+        summaryItemsList.innerHTML = '<p style="text-align:center;color:var(--gray);">No items in cart</p>';
+      }
+      updateCartSummary(0, 0, 0);
+      return;
+    }
+    
+    // Render cart items list
+    if (cartItemsList) {
+      cartItemsList.innerHTML = cart.map((item, index) => `
+        <div class="cart-item-card" data-index="${index}">
+          <div class="cart-item-image">
+            <img src="${item.image || 'assets/images/Richtymluxe.PNG'}" alt="${item.name}" loading="lazy">
+          </div>
+          <div class="cart-item-details">
+            <h4 class="cart-item-name">${item.name}</h4>
+            ${item.category ? `<p class="cart-item-category">${item.category}</p>` : ''}
+            ${item.selectedStorage || item.selectedColor ? `
+              <div class="cart-item-variants">
+                ${item.selectedStorage ? `<span class="cart-item-variant">${item.selectedStorage}</span>` : ''}
+                ${item.selectedColor ? `<span class="cart-item-variant">${item.selectedColor}</span>` : ''}
+              </div>
+            ` : ''}
+            <div class="cart-item-price-row">
+              <span class="cart-item-price">GH₵ ${item.price}</span>
+              ${item.originalPrice && item.originalPrice > item.price ? `
+                <span class="cart-item-original-price">GH₵ ${item.originalPrice}</span>
+                <span class="cart-item-discount-badge">-${Math.round((1 - item.price/item.originalPrice) * 100)}%</span>
+              ` : ''}
+            </div>
+            <div class="cart-item-quantity">
+              <button class="cart-qty-btn" onclick="updateCartItemQty(${index}, -1)" aria-label="Decrease quantity">-</button>
+              <span class="cart-qty-value">${item.qty}</span>
+              <button class="cart-qty-btn" onclick="updateCartItemQty(${index}, 1)" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+          <div class="cart-item-remove">
+            <span class="cart-item-line-total">Line Total: <strong>GH₵ ${(item.price * item.qty).toFixed(2)}</strong></span>
+            <button class="remove-item-btn" onclick="removeCartItem(${index})" aria-label="Remove item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              Remove
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Render summary items
+    if (summaryItemsList) {
+      summaryItemsList.innerHTML = cart.map(item => `
+        <div class="summary-item">
+          <span class="summary-item-name">${item.name} ${item.selectedStorage ? `(${item.selectedStorage})` : ''} ${item.selectedColor ? `(${item.selectedColor})` : ''}</span>
+          <span class="summary-item-qty">x${item.qty}</span>
+          <span class="summary-item-price">GH₵ ${(item.price * item.qty).toFixed(2)}</span>
+        </div>
+      `).join('');
+    }
+    
+    // Update count
+    if (cartItemsCount) {
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      cartItemsCount.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+    }
+    
+    // Update summary
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    updateCartSummary(subtotal, totalQty, subtotal);
+  }
+
+  // Update cart item quantity
+  function updateCartItemQty(index, change) {
+    if (index >= 0 && index < cart.length) {
+      cart[index].qty += change;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      saveCart();
+    }
+  }
+
+  // Remove cart item
+  function removeCartItem(index) {
+    if (index >= 0 && index < cart.length) {
+      cart.splice(index, 1);
+      saveCart();
+    }
+  }
+
+  // Clear cart
+  function clearCart() {
+    if (cart.length === 0) return;
+    if (confirm('Are you sure you want to clear your cart?')) {
+      cart = [];
+      saveCart();
+    }
+  }
+
+  // Update cart summary
+  function updateCartSummary(subtotal, quantity, total) {
+    const subtotalEl = document.getElementById('summarySubtotal');
+    const quantityEl = document.getElementById('summaryQuantity');
+    const totalEl = document.getElementById('summaryTotal');
+    const checkoutSubtotalEl = document.getElementById('checkoutSubtotal');
+    const checkoutQuantityEl = document.getElementById('checkoutQuantity');
+    const checkoutTotalEl = document.getElementById('checkoutTotal');
+    
+    if (subtotalEl) subtotalEl.textContent = `GH₵ ${subtotal.toFixed(2)}`;
+    if (quantityEl) quantityEl.textContent = quantity;
+    if (totalEl) totalEl.textContent = `GH₵ ${total.toFixed(2)}`;
+    if (checkoutSubtotalEl) checkoutSubtotalEl.textContent = `GH₵ ${subtotal.toFixed(2)}`;
+    if (checkoutQuantityEl) checkoutQuantityEl.textContent = quantity;
+    if (checkoutTotalEl) checkoutTotalEl.textContent = `GH₵ ${total.toFixed(2)}`;
+  }
+
+  // Render checkout summary
+  function renderCheckoutSummary() {
+    const summaryItemsList = document.getElementById('checkoutSummaryItems');
+    if (!summaryItemsList) return;
+    
+    if (cart.length === 0) {
+      summaryItemsList.innerHTML = '<p style="text-align:center;color:var(--gray);">No items in cart</p>';
+      updateCartSummary(0, 0, 0);
+      return;
+    }
+    
+    summaryItemsList.innerHTML = cart.map(item => `
+      <div class="summary-item">
+        <span class="summary-item-name">${item.name} ${item.selectedStorage ? `(${item.selectedStorage})` : ''} ${item.selectedColor ? `(${item.selectedColor})` : ''}</span>
+        <span class="summary-item-qty">x${item.qty}</span>
+        <span class="summary-item-price">GH₵ ${(item.price * item.qty).toFixed(2)}</span>
+      </div>
+    `).join('');
+    
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    updateCartSummary(subtotal, totalQty, subtotal);
+  }
 
 // Update cart count
 function updateCartCount() {
@@ -716,6 +885,9 @@ document.addEventListener('DOMContentLoaded', function() {
   initSmoothScroll();
   setActiveNavLink();
   
+  // Check for Paystack payment callback
+  checkPaymentCallback();
+  
   // Event listeners
   window.addEventListener('scroll', handleScroll, { passive: true });
   
@@ -827,12 +999,297 @@ window.updateQty = updateQty;
 window.sendToWhatsApp = sendToWhatsApp;
 window.initPaystack = initPaystack;
 window.initServicePayment = initServicePayment;
-window.payWithPaystack = payWithPaystack;
-window.filterGallery = filterGallery;
-window.openCart = openCart;
-window.closeCart = closeCart;
-window.toggleNav = toggleNav;
-window.closeNav = closeNav;
-window.addProductToCart = addProductToCart;
-window.loadProductsToPage = loadProductsToPage;
-window.fetchProducts = fetchProducts;
+// Process Paystack payment for checkout
+  function processPaystackPayment() {
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+
+    // Validate customer details
+    const fullName = document.getElementById('fullName')?.value.trim();
+    const phoneNumber = document.getElementById('phoneNumber')?.value.trim();
+    const whatsappNumber = document.getElementById('whatsappNumber')?.value.trim();
+    const location = document.getElementById('location')?.value.trim();
+    const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked')?.value;
+    const additionalNotes = document.getElementById('additionalNotes')?.value.trim();
+
+    if (!fullName || !phoneNumber || !whatsappNumber || !location || !deliveryOption) {
+      alert('Please fill in all required fields!');
+      // Highlight empty fields
+      if (!fullName) document.getElementById('fullName').classList.add('error');
+      if (!phoneNumber) document.getElementById('phoneNumber').classList.add('error');
+      if (!whatsappNumber) document.getElementById('whatsappNumber').classList.add('error');
+      if (!location) document.getElementById('location').classList.add('error');
+      return;
+    }
+
+    // Validate phone number format
+    const phoneRegex = /^\d{10,15}$/;
+    if (!phoneRegex.test(phoneNumber.replace(/[^\d]/g, ''))) {
+      alert('Please enter a valid phone number (10-15 digits)');
+      document.getElementById('phoneNumber').classList.add('error');
+      return;
+    }
+
+    if (!phoneRegex.test(whatsappNumber.replace(/[^\d]/g, ''))) {
+      alert('Please enter a valid WhatsApp number (10-15 digits)');
+      document.getElementById('whatsappNumber').classList.add('error');
+      return;
+    }
+
+    const grandTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const email = document.getElementById('emailAddress')?.value.trim() || `${phoneNumber.replace(/[^\d]/g, '')}@richtymluxe.local`;
+
+    // Show processing status
+    const paystackBtn = document.getElementById('paystackPaymentBtn');
+    const paymentStatus = document.getElementById('paymentStatus');
+    const whatsappOrderBtn = document.getElementById('whatsappOrderBtn');
+    const backToCartBtn = document.getElementById('backToCartBtn');
+
+    if (paystackBtn) {
+      paystackBtn.disabled = true;
+      paystackBtn.innerHTML = `
+        <svg class="spinner" viewBox="0 0 24 24" style="width:20px;height:20px;fill:var(--accent);animation:spin 1s linear infinite">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.2"/>
+          <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="4" fill="none"/>
+        </svg>
+        Processing...
+      `;
+    }
+
+    if (paymentStatus) {
+      paymentStatus.className = 'payment-status processing';
+      paymentStatus.querySelector('#paymentStatusTitle').textContent = 'Processing Payment';
+      paymentStatus.querySelector('#paymentStatusMessage').textContent = 'Redirecting to Paystack...';
+      paymentStatus.style.display = 'block';
+    }
+
+    // Prepare payment data
+    const paymentData = {
+      amount: grandTotal,
+      paymentType: 'product',
+      customerDetails: {
+        name: fullName,
+        phone: phoneNumber,
+        email: email,
+        address: location
+      },
+      items: cart.map(item => ({
+        productId: item.id,
+        productName: item.name,
+        productType: item.productType || 'boutique',
+        category: item.category || '',
+        quantity: item.qty,
+        price: item.price,
+        selectedStorage: item.selectedStorage || '',
+        selectedColor: item.selectedColor || ''
+      })),
+      deliveryOption: deliveryOption,
+      additionalNotes: additionalNotes || '',
+      email: email
+    };
+
+    // Initialize Paystack payment via backend
+    fetch(`${API_BASE}/payments/initialize`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(paymentData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success && data.paystack.authorization_url) {
+        // Store order data in localStorage for after payment
+        const orderData = {
+          ...paymentData,
+          paystackReference: data.paystack.reference,
+          paymentId: data.payment._id,
+          status: 'pending',
+          createdAt: new Date().toISOString()
+        };
+        localStorage.setItem('richtymluxe_pending_order', JSON.stringify(orderData));
+        
+        // Redirect to Paystack
+        window.location.href = data.paystack.authorization_url;
+      } else {
+        throw new Error(data.message || 'Payment initialization failed');
+      }
+    })
+    .catch(error => {
+      console.error('Payment error:', error);
+      
+      if (paystackBtn) {
+        paystackBtn.disabled = false;
+        paystackBtn.innerHTML = `
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          Pay with Paystack
+        `;
+      }
+      
+      if (paymentStatus) {
+        paymentStatus.className = 'payment-status error';
+        paymentStatus.querySelector('#paymentStatusTitle').textContent = 'Payment Failed';
+        paymentStatus.querySelector('#paymentStatusMessage').textContent = error.message || 'Payment initialization failed. Please try again.';
+        paymentStatus.style.display = 'block';
+      }
+      
+      if (backToCartBtn) {
+        backToCartBtn.style.display = 'block';
+      }
+    });
+  }
+
+  // Submit WhatsApp order after successful payment
+  function submitWhatsAppOrder() {
+    const pendingOrder = localStorage.getItem('richtymluxe_pending_order');
+    
+    if (!pendingOrder) {
+      alert('No pending order found. Please complete payment first.');
+      return;
+    }
+
+    const orderData = JSON.parse(pendingOrder);
+    
+    // Verify payment was successful
+    if (orderData.status !== 'success') {
+      alert('Payment not verified. Please complete payment first.');
+      return;
+    }
+
+    const { customerDetails, items, deliveryOption, additionalNotes, paystackReference } = orderData;
+    const grandTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // Build WhatsApp message
+    let message = `*🛍️ New Paid Order - Rich Tym Luxe*\n\n`;
+    message += `*Order Reference:* ${paystackReference || 'N/A'}\n`;
+    message += `*Paystack Reference:* ${paystackReference || 'N/A'}\n\n`;
+    
+    message += `*Customer Details:*\n`;
+    message += `Name: ${customerDetails.name}\n`;
+    message += `Phone: ${customerDetails.phone}\n`;
+    message += `WhatsApp: ${customerDetails.phone}\n`;
+    message += `Email: ${customerDetails.email || 'N/A'}\n`;
+    message += `Delivery/Pickup: ${deliveryOption === 'delivery' ? 'Delivery' : 'Pickup'}\n`;
+    message += `Location/Address: ${customerDetails.address}\n\n`;
+    
+    message += `*Products Ordered:*\n`;
+    items.forEach((item, index) => {
+      message += `${index + 1}. ${item.productName}\n`;
+      if (item.selectedStorage) message += `   Storage: ${item.selectedStorage}\n`;
+      if (item.selectedColor) message += `   Color: ${item.selectedColor}\n`;
+      message += `   Quantity: ${item.quantity}\n`;
+      message += `   Unit Price: GH₵ ${item.price}\n`;
+      message += `   Line Total: GH₵ ${(item.price * item.quantity).toFixed(2)}\n\n`;
+    });
+    
+    message += `*Grand Total: GH₵ ${grandTotal.toFixed(2)}*\n\n`;
+    
+    if (additionalNotes) {
+      message += `*Additional Notes:*\n${additionalNotes}\n\n`;
+    }
+    
+    message += `*Payment Method:* Paystack (Online Payment)\n`;
+    message += `*Payment Status:* ✅ Paid\n`;
+
+    const encodedMessage = encodeURIComponent(message);
+    
+    // Try both WhatsApp numbers
+    const whatsappNumbers = ['233503390421', '233597705175'];
+    const primaryNumber = whatsappNumbers[0];
+    
+    // Open WhatsApp with primary number
+    window.open(`https://wa.me/${primaryNumber}?text=${encodedMessage}`, '_blank');
+    
+    // Show success message
+    const paymentStatus = document.getElementById('paymentStatus');
+    if (paymentStatus) {
+      paymentStatus.className = 'payment-status success';
+      paymentStatus.querySelector('#paymentStatusTitle').textContent = 'Order Submitted!';
+      paymentStatus.querySelector('#paymentStatusMessage').textContent = 'WhatsApp message opened. Please complete your order submission.';
+      paymentStatus.style.display = 'block';
+    }
+    
+    // Hide WhatsApp button, show back to cart
+    const whatsappOrderBtn = document.getElementById('whatsappOrderBtn');
+    const backToCartBtn = document.getElementById('backToCartBtn');
+    if (whatsappOrderBtn) whatsappOrderBtn.style.display = 'none';
+    if (backToCartBtn) backToCartBtn.style.display = 'block';
+    
+    // Clear cart and pending order after successful submission
+    setTimeout(() => {
+      cart = [];
+      saveCart();
+      localStorage.removeItem('richtymluxe_pending_order');
+    }, 2000);
+  }
+
+  // Check for successful Paystack payment callback on page load
+  function checkPaymentCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const reference = urlParams.get('reference');
+    const status = urlParams.get('status');
+    
+    if (reference && status === 'success') {
+      // Verify payment with backend
+      fetch(`${API_BASE}/payments/verify/${reference}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.payment) {
+            // Update pending order status
+            const pendingOrder = localStorage.getItem('richtymluxe_pending_order');
+            if (pendingOrder) {
+              const orderData = JSON.parse(pendingOrder);
+              orderData.status = 'success';
+              orderData.paystackReference = reference;
+              orderData.paymentVerified = true;
+              localStorage.setItem('richtymluxe_pending_order', JSON.stringify(orderData));
+              
+              // Show success state
+              const paymentStatus = document.getElementById('paymentStatus');
+              const paystackBtn = document.getElementById('paystackPaymentBtn');
+              const whatsappOrderBtn = document.getElementById('whatsappOrderBtn');
+              const backToCartBtn = document.getElementById('backToCartBtn');
+              
+              if (paymentStatus) {
+                paymentStatus.className = 'payment-status success';
+                paymentStatus.querySelector('#paymentStatusTitle').textContent = 'Payment Successful!';
+                paymentStatus.querySelector('#paymentStatusMessage').textContent = 'Your payment has been verified. Click below to submit your order via WhatsApp.';
+                paymentStatus.style.display = 'block';
+              }
+              
+              if (paystackBtn) paystackBtn.style.display = 'none';
+              if (whatsappOrderBtn) whatsappOrderBtn.style.display = 'flex';
+              if (backToCartBtn) backToCartBtn.style.display = 'none';
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Payment verification error:', error);
+        });
+    }
+  }
+
+  // Make functions globally available
+  window.addToCart = addToCart;
+  window.removeFromCart = removeFromCart;
+  window.updateQty = updateQty;
+  window.sendToWhatsApp = sendToWhatsApp;
+  window.initPaystack = initPaystack;
+  window.initServicePayment = initServicePayment;
+  window.payWithPaystack = payWithPaystack;
+  window.filterGallery = filterGallery;
+  window.openCart = openCart;
+  window.closeCart = closeCart;
+  window.toggleNav = toggleNav;
+  window.closeNav = closeNav;
+  window.addProductToCart = addProductToCart;
+  window.loadProductsToPage = loadProductsToPage;
+  window.fetchProducts = fetchProducts;
+  window.updateCartItemQty = updateCartItemQty;
+  window.removeCartItem = removeCartItem;
+  window.clearCart = clearCart;
+  window.processPaystackPayment = processPaystackPayment;
+  window.submitWhatsAppOrder = submitWhatsAppOrder;
+  window.checkPaymentCallback = checkPaymentCallback;

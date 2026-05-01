@@ -33,7 +33,11 @@ if (!fs.existsSync(uploadsDir)) {
 connectDB();
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'https://richtymluxe-production.up.railway.app',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -69,20 +69,46 @@ const verifyPayment = asyncHandler(async (req, res) => {
     throw new Error('Payment reference is required');
   }
 
-  // Verify with Paystack
-  const paystackResponse = await Paystack.transaction.verify(reference);
+   // Verify with Paystack
+   const paystackResponse = await Paystack.transaction.verify(reference);
 
-  if (!paystackResponse.data) {
+   if (!paystackResponse.data) {
+     res.status(400);
+     throw new Error('Payment verification failed');
+   }
+
+   // Find and update payment record
+   const payment = await Payment.findOne({ reference });
+
+   if (!payment) {
+     res.status(404);
+     throw new Error('Payment record not found');
+   }
+
+   // Prevent duplicate processing - if payment already successful, return early
+   if (payment.status === 'success') {
+     res.json({
+       success: true,
+       payment: payment,
+       paystack: paystackResponse.data,
+       message: 'Payment already processed'
+     });
+     return;
+   }
+
+  // Validate payment details
+  const paystackAmount = paystackResponse.data.amount / 100; // Convert from kobo to GHS
+  const paystackCurrency = paystackResponse.data.currency;
+  
+  // Check if amount matches and currency is GHS
+  if (Math.abs(paystackAmount - payment.amount) > 0.01) { // Allow for small floating point differences
     res.status(400);
-    throw new Error('Payment verification failed');
+    throw new Error('Amount mismatch: paid amount does not match expected amount');
   }
-
-  // Find and update payment record
-  const payment = await Payment.findOne({ reference });
-
-  if (!payment) {
-    res.status(404);
-    throw new Error('Payment record not found');
+  
+  if (paystackCurrency !== 'GHS') {
+    res.status(400);
+    throw new Error('Currency mismatch: expected GHS');
   }
 
   // Update payment status based on Paystack response
