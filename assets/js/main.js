@@ -1293,37 +1293,28 @@ window.initServicePayment = initServicePayment;
     // Initialize delivery/pickup toggle functionality
     function initDeliveryPickupToggle() {
         const deliveryOptionRadios = document.querySelectorAll('input[name="deliveryOption"]');
-        const locationField = document.getElementById('location');
-        const locationLabel = document.querySelector('label[for="location"]');
+        const locationFieldGroup = document.getElementById('location').closest('.form-group');
         
-        if (!deliveryOptionRadios.length || !locationField) return;
+        if (!deliveryOptionRadios.length || !locationFieldGroup) return;
 
-        // Function to update field state based on selected option
-        function updateLocationFieldState() {
+        // Function to update field visibility based on selected option
+        function updateLocationFieldVisibility() {
             const isPickup = document.querySelector('input[name="deliveryOption"][value="pickup"]:checked');
             
             if (isPickup) {
-                // For pickup, make location field optional and change placeholder
-                locationField.removeAttribute('required');
-                locationField.placeholder = 'Enter your pickup location (optional)';
-                if (locationLabel) {
-                    locationLabel.innerHTML = 'Location / Pickup Location <span class="required">*</span>';
-                }
+                // For pickup, hide the location field completely
+                locationFieldGroup.style.display = 'none';
             } else {
-                // For delivery, make location field required
-                locationField.setAttribute('required', '');
-                locationField.placeholder = 'Enter your delivery address';
-                if (locationLabel) {
-                    locationLabel.innerHTML = 'Location / Delivery Address <span class="required">*</span>';
-                }
+                // For delivery, show the location field
+                locationFieldGroup.style.display = 'block';
             }
         }
 
         // Add event listeners to delivery option radios
         deliveryOptionRadios.forEach(radio => {
-            radio.addEventListener('change', updateLocationFieldState);
+            radio.addEventListener('change', updateLocationFieldVisibility);
         });
 
         // Initialize state on page load
-        updateLocationFieldState();
+        updateLocationFieldVisibility();
     }
