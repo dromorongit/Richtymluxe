@@ -42,7 +42,7 @@ function initCart() {
     if (savedCart) {
       cart = JSON.parse(savedCart);
       updateCartCount();
-      renderCartItems();
+      // renderCartItems() - removed (mini cart disabled)
     }
     
     // Load saved customer details
@@ -143,7 +143,10 @@ function addProductToCart(productId) {
       cart.push({ ...cartProduct, qty: 1 });
     }
     saveCart();
-    openCart();
+    // Show toast notification
+    if (typeof showToast === 'function') {
+      showToast('Product added to cart successfully.', true);
+    }
   }
 }
 
@@ -200,7 +203,7 @@ async function loadProductsToPage(productType) {
       localStorage.setItem('richtymluxe_customer', JSON.stringify(customerDetails));
       
       updateCartCount();
-      renderCartItems();
+      // renderCartItems() - removed (mini cart disabled)
       renderCartPageItems();
       renderCheckoutSummary();
     } catch (e) {
@@ -386,6 +389,37 @@ function updateCartCount() {
   }
 }
 
+// Show toast notification
+function showToast(message = 'Product added to cart successfully.', showViewCart = true) {
+  const toast = document.getElementById('toast-notification');
+  if (!toast) return;
+  
+  const toastMessage = toast.querySelector('.toast-message');
+  const continueBtn = toast.querySelector('.continue-shopping');
+  const viewCartBtn = toast.querySelector('.view-cart');
+  
+  if (toastMessage) toastMessage.textContent = message;
+  if (viewCartBtn) viewCartBtn.style.display = showViewCart ? 'block' : 'none';
+  
+  toast.classList.add('show');
+  
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 5000);
+  
+  // Continue shopping button closes toast
+  if (continueBtn) {
+    continueBtn.onclick = () => toast.classList.remove('show');
+  }
+  // View Cart button navigates to cart page
+  if (viewCartBtn) {
+    viewCartBtn.onclick = () => {
+      window.location.href = 'cart.html';
+    };
+  }
+}
+
 // Add to cart
 function addToCart(productId) {
   const product = products.find(p => String(p.id) === String(productId));
@@ -397,7 +431,10 @@ function addToCart(productId) {
       cart.push({ ...product, qty: 1 });
     }
     saveCart();
-    openCart();
+    // Show toast notification
+    if (typeof showToast === 'function') {
+      showToast('Product added to cart successfully.', true);
+    }
   }
 }
 
@@ -425,112 +462,19 @@ function getCartTotal() {
   return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 }
 
-// Render cart items with event delegation
+// Render cart items (mini cart) - DISABLED - using main cart page only
 function renderCartItems() {
-  const cartItemsContainer = document.querySelector('.cart-items');
-  if (!cartItemsContainer) return;
-
-  if (cart.length === 0) {
-    cartItemsContainer.innerHTML = `
-      <div class="cart-empty">
-        <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
-        <p>Your cart is empty</p>
-      </div>
-    `;
-    return;
-  }
-
-  cartItemsContainer.innerHTML = cart.map(item => `
-    <div class="cart-item" data-id="${item.id}">
-      <div class="cart-item-image">
-        <img src="${item.image}" alt="${item.name}" loading="lazy">
-      </div>
-      <div class="cart-item-details">
-        <h4>${item.name}</h4>
-        <p>GH₵ ${item.price}</p>
-        <div class="cart-item-qty">
-          <span class="qty-btn" data-action="decrease" data-id="${item.id}">-</span>
-          <span>${item.qty}</span>
-          <span class="qty-btn" data-action="increase" data-id="${item.id}">+</span>
-        </div>
-        <span class="cart-item-remove" data-action="remove" data-id="${item.id}">Remove</span>
-      </div>
-    </div>
-  `).join('');
-
-  // Add event listeners using event delegation
-  cartItemsContainer.querySelectorAll('.qty-btn, .cart-item-remove').forEach(el => {
-    el.addEventListener('click', function(e) {
-      e.preventDefault();
-      const id = this.getAttribute('data-id');
-      const action = this.getAttribute('data-action');
-      
-      if (action === 'remove') {
-        removeFromCart(id);
-      } else if (action === 'increase') {
-        updateQty(id, 1);
-      } else if (action === 'decrease') {
-        updateQty(id, -1);
-      }
-    });
-  });
-
-  const cartTotal = document.querySelector('.cart-total strong');
-  if (cartTotal) {
-    cartTotal.textContent = `GH₵ ${getCartTotal()}`;
-  }
+  // Mini cart removed - function disabled
 }
 
-// Open cart
+// Open cart - DISABLED (mini cart removed)
 function openCart() {
-  if (cartSidebar) cartSidebar.classList.add('active');
-  if (cartOverlay) cartOverlay.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  // No operation - mini cart removed
 }
 
-// Close cart
+// Close cart - DISABLED
 function closeCart() {
-  if (cartSidebar) cartSidebar.classList.remove('active');
-  if (cartOverlay) cartOverlay.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-// Send to WhatsApp
-function sendToWhatsApp() {
-  if (cart.length === 0) {
-    alert('Your cart is empty!');
-    return;
-  }
-
-  // Get customer details
-  const customerName = document.getElementById('customer-name')?.value.trim();
-  const customerPhone = document.getElementById('customer-phone')?.value.trim();
-  const customerAddress = document.getElementById('customer-address')?.value.trim();
-
-  // Validate customer details
-  if (!customerName || !customerPhone || !customerAddress) {
-    alert('Please fill in your name, phone number, and delivery address!');
-    return;
-  }
-
-  const phoneNumber = '233503390421';
-  let message = `*🛒 New Order from Rich Tym Luxe*\n\n`;
-  
-  message += `*Customer Details:*\n`;
-  message += `Name: ${customerName}\n`;
-  message += `Phone: ${customerPhone}\n`;
-  message += `Address: ${customerAddress}\n\n`;
-  
-  message += `*Order Items:*\n`;
-  
-  cart.forEach(item => {
-    message += `• ${item.name} x${item.qty} = GH₵ ${item.price * item.qty}\n`;
-  });
-  
-  message += `\n*Total: GH₵ ${getCartTotal()}*\n\n`;
-  
-  const encodedMessage = encodeURIComponent(message);
-  window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+  // Mini cart removed - function disabled
 }
 
 // Paystack Product Payment
@@ -886,6 +830,15 @@ document.addEventListener('DOMContentLoaded', function() {
   initSmoothScroll();
   setActiveNavLink();
   
+  // Render cart page items if on cart page
+  if (document.getElementById('cartItemsList')) {
+    renderCartPageItems();
+  }
+  // Render checkout summary if on checkout page
+  if (document.getElementById('checkoutSummaryItems')) {
+    renderCheckoutSummary();
+  }
+  
   // Check for Paystack payment callback
   checkPaymentCallback();
   
@@ -893,18 +846,8 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('scroll', handleScroll, { passive: true });
   
   // Note: Navigation toggle uses inline onclick in HTML
-  // Cart
-  if (cartBtn) {
-    cartBtn.addEventListener('click', openCart);
-  }
-  
-  if (cartClose) {
-    cartClose.addEventListener('click', closeCart);
-  }
-  
-  if (cartOverlay) {
-    cartOverlay.addEventListener('click', closeCart);
-  }
+  // Cart button is now a direct link to cart.html, no JS needed
+  // Mini cart removed - no event listeners attached
   
   // Lightbox
   if (lightboxClose) {
@@ -954,6 +897,14 @@ document.addEventListener('DOMContentLoaded', function() {
     contactForm.addEventListener('submit', submitContact);
   }
 
+  // Render cart/checkout pages on load
+  if (document.getElementById('cartItemsList')) {
+    renderCartPageItems();
+  }
+  if (document.getElementById('checkoutSummaryItems')) {
+    renderCheckoutSummary();
+  }
+
   // Close nav when clicking outside
   document.addEventListener('click', function(e) {
     if (navMenu && navMenu.classList.contains('active')) {
@@ -997,7 +948,6 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addToCart = addToCart;
 window.removeFromCart = removeFromCart;
 window.updateQty = updateQty;
-window.sendToWhatsApp = sendToWhatsApp;
 window.initPaystack = initPaystack;
 window.initServicePayment = initServicePayment;
 // Process Paystack payment for checkout
@@ -1196,12 +1146,12 @@ window.initServicePayment = initServicePayment;
 
     const encodedMessage = encodeURIComponent(message);
     
-    // Try both WhatsApp numbers
-    const whatsappNumbers = ['233503390421', '233597705175'];
-    const primaryNumber = whatsappNumbers[0];
+    // Get selected WhatsApp number from checkout form
+    const selectedNumberRadio = document.querySelector('input[name="selectedWhatsAppNumber"]:checked');
+    const whatsappNumber = selectedNumberRadio ? selectedNumberRadio.value : '233503390421';
     
-    // Open WhatsApp with primary number
-    window.open(`https://wa.me/${primaryNumber}?text=${encodedMessage}`, '_blank');
+    // Open WhatsApp with selected number
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
     
     // Show success message
     const paymentStatus = document.getElementById('paymentStatus');
@@ -1252,6 +1202,7 @@ window.initServicePayment = initServicePayment;
               const paystackBtn = document.getElementById('paystackPaymentBtn');
               const whatsappOrderBtn = document.getElementById('whatsappOrderBtn');
               const backToCartBtn = document.getElementById('backToCartBtn');
+              const whatsappNumberSelector = document.getElementById('whatsappNumberSelector');
               
               if (paymentStatus) {
                 paymentStatus.className = 'payment-status success';
@@ -1263,6 +1214,7 @@ window.initServicePayment = initServicePayment;
               if (paystackBtn) paystackBtn.style.display = 'none';
               if (whatsappOrderBtn) whatsappOrderBtn.style.display = 'flex';
               if (backToCartBtn) backToCartBtn.style.display = 'none';
+              if (whatsappNumberSelector) whatsappNumberSelector.style.display = 'block';
             }
           }
         })
@@ -1276,13 +1228,10 @@ window.initServicePayment = initServicePayment;
    window.addToCart = addToCart;
    window.removeFromCart = removeFromCart;
    window.updateQty = updateQty;
-   window.sendToWhatsApp = sendToWhatsApp;
    window.initPaystack = initPaystack;
    window.initServicePayment = initServicePayment;
    window.payWithPaystack = payWithPaystack;
    window.filterGallery = filterGallery;
-   window.openCart = openCart;
-   window.closeCart = closeCart;
    window.toggleNav = toggleNav;
    window.closeNav = closeNav;
    window.addProductToCart = addProductToCart;
