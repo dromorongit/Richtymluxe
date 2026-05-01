@@ -376,14 +376,14 @@ async function loadProductsToPage(productType) {
     
     summaryItemsList.innerHTML = cart.map(item => `
       <div class="summary-item">
-        <span class="summary-item-name">${item.name} ${item.selectedStorage ? `(${item.selectedStorage})` : ''} ${item.selectedColor ? `(${item.selectedColor})` : ''}</span>
-        <span class="summary-item-qty">x${item.qty}</span>
-        <span class="summary-item-price">GH₵ ${(item.price * item.qty).toFixed(2)}</span>
+        <span class="summary-item-name">${item.productName} ${item.selectedStorage ? `(${item.selectedStorage})` : ''} ${item.selectedColor ? `(${item.selectedColor})` : ''}</span>
+        <span class="summary-item-qty">x${item.quantity}</span>
+        <span class="summary-item-price">GH₵ ${(item.finalPrice * item.quantity).toFixed(2)}</span>
       </div>
     `).join('');
     
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    const subtotal = cart.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
+    const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
     updateCartSummary(subtotal, totalQty, subtotal);
   }
 
@@ -1011,7 +1011,7 @@ window.initServicePayment = initServicePayment;
       return;
     }
 
-    const grandTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const grandTotal = cart.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
     const email = document.getElementById('emailAddress')?.value.trim() || `${phoneNumber.replace(/[^\d]/g, '')}@richtymluxe.local`;
 
     // Show processing status
@@ -1050,11 +1050,11 @@ window.initServicePayment = initServicePayment;
       },
       items: cart.map(item => ({
         productId: item.id,
-        productName: item.name,
+        productName: item.productName,
         productType: item.productType || 'boutique',
         category: item.category || '',
-        quantity: item.qty,
-        price: item.price,
+        quantity: item.quantity,
+        price: item.finalPrice,
         selectedStorage: item.selectedStorage || '',
         selectedColor: item.selectedColor || ''
       })),
@@ -1266,3 +1266,9 @@ window.initServicePayment = initServicePayment;
    window.submitWhatsAppOrder = submitWhatsAppOrder;
    window.checkPaymentCallback = checkPaymentCallback;
    window.renderProductCard = renderProductCard;
+
+   // Initialize cart and render checkout summary on DOM load
+   document.addEventListener('DOMContentLoaded', function() {
+       initCart();
+       renderCheckoutSummary();
+   });
