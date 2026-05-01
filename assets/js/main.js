@@ -1024,7 +1024,7 @@ window.initServicePayment = initServicePayment;
     }
 
     const grandTotal = cart.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
-    const email = document.getElementById('emailAddress')?.value.trim() || `${phoneNumber.replace(/[^\d]/g, '')}@richtymluxe.local`;
+    const email = document.getElementById('emailAddress')?.value.trim() || PAYSTACK_DEFAULT_EMAIL;
 
     // Show processing status
     const paystackBtn = document.getElementById('paystackPaymentBtn');
